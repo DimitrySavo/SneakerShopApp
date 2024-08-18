@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,5 +77,19 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.firestore)
 
+    // Coil implementation
+    implementation(libs.coil.compose)
 
+    // Coroutines implementation
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Firebase ktx
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.auth.ktx)
+
+    // ViewModel compose
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    testImplementation(libs.androidx.core)
 }
