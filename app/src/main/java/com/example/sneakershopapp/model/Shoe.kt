@@ -77,3 +77,20 @@ suspend fun Shoe.getPreviewUrl(): String {
         "Error fetching URL"
     }
 }
+
+suspend fun Shoe.getImagesUrls(): List<String> {
+    val storageRef = Firebase.storage.reference.child(this.imageCollectionUrl)
+    val imagesUrls = mutableListOf<String>()
+    try {
+        val listResult = storageRef.listAll().await()
+        listResult.items.forEach { item ->
+            val downloadUrl = item.downloadUrl.await()
+            imagesUrls.add(downloadUrl.toString())
+        }
+    } catch (e: StorageException) {
+        Log.e("Image URI", "Storage Exception: ${e.message}", e)
+    } catch (e: Exception) {
+        Log.e("Image URI", "General Exception: ${e.message}", e)
+    }
+    return imagesUrls
+}
