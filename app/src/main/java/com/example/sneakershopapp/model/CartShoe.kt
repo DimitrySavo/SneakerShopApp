@@ -1,7 +1,11 @@
 package com.example.sneakershopapp.model
 
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.Exclude
+
 data class CartShoe(
-    val shoe: Shoe,
-    val size: Size,
-    val quantity: Long
+    @get:Exclude var documentId: String? = null,
+    val size: String,
+    val quantity: Long = 1,
+    var shoeRef: DocumentReference? = null
 )

@@ -5,6 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,13 +34,13 @@ import com.example.sneakershopapp.viewmodel.MyViewModel
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             SneakerShopAppTheme {
                 val viewModel = viewModel<MyViewModel>()
                 val shoesList by viewModel.shoes.collectAsState()
                 val user by viewModel.user.collectAsState()
                 val password by viewModel.password.collectAsState()
+                val favorites by viewModel.favorites.collectAsState()
 
                 Column(
                     modifier = Modifier
@@ -83,6 +86,23 @@ class MainActivity : ComponentActivity() {
                     
                     Button(onClick = { viewModel.getUserUid() }) {
                         Text(text = "Get current user uid")
+                    }
+
+                    Button(onClick = { viewModel.addToCart("ET96Bi8yKUJzOEGHCCCI") }) {
+                        Text(text = "Add to cart")
+                    }
+
+                    Text(text = favorites.toString())
+                    Button(onClick = { viewModel.getFavorites() }) {
+                        Text(text = "Get favorites")
+                    }
+
+                    Button(onClick = { viewModel.markShoeAsFavorite() }) {
+                        Text(text = "Mark shoe as favorite")
+                    }
+
+                    Button(onClick = { viewModel.unmarkShoeAsFavorite() }) {
+                        Text(text = "Unmark shoe as favorite")
                     }
                 }
             }

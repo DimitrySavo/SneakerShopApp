@@ -91,5 +91,8 @@ dependencies {
     // ViewModel compose
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
+    // Jetpack DataStore
+    implementation(libs.androidx.datastore)
+
     testImplementation(libs.androidx.core)
 }

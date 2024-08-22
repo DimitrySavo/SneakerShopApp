@@ -7,8 +7,15 @@ data class User(
     val name: String,
     val surname: String,
     val phoneNumber: String? = null,
-    val deliveryAddress: String? = null
-)
+    val deliveryAddress: String? = null,
+    var favorites: List<String> = emptyList(),
+){
+    constructor(): this(
+        "",
+        "",
+        ""
+    )
+}
 
 fun User.checkUser(password: String): Boolean {
     return ValidationUtils.isEmailValid(this.email) &&

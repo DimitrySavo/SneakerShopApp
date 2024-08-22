@@ -3,8 +3,10 @@ package com.example.sneakershopapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.sneakershopapp.model.CartShoe
 import com.example.sneakershopapp.model.DataService
 import com.example.sneakershopapp.model.Shoe
+import com.example.sneakershopapp.model.Size
 import com.example.sneakershopapp.model.User
 import com.example.sneakershopapp.model.getPreviewUrl
 import kotlinx.coroutines.async
@@ -24,10 +26,26 @@ class MyViewModel(private val dataService: DataService = DataService()): ViewMod
     private val _password = MutableStateFlow("")
     val password = _password.asStateFlow()
 
+    private val _favorites = MutableStateFlow(emptyList<String>())
+    val favorites = _favorites.asStateFlow()
+
 
     fun getShoes() = viewModelScope.launch {
         val shoes = dataService.getShoes()
         _shoes.value = shoes
+    }
+
+    fun getFavorites() = viewModelScope.launch {
+        val favorites = dataService.getFavorites()
+        _favorites.value = favorites
+    }
+
+    fun markShoeAsFavorite(shoeId: String = "ET96Bi8yKUJzOEGHCCCI") = viewModelScope.launch {
+        dataService.markShoeAsFavorite(shoeId)
+    }
+
+    fun unmarkShoeAsFavorite(shoeId: String = "ET96Bi8yKUJzOEGHCCCI") = viewModelScope.launch {
+        dataService.unmarkShoeAsFavorite(shoeId)
     }
 
     fun updateUser(email: String? = null, name: String? = null, surname: String? = null, phoneNumber: String? = null, deliveryAddress: String? = null) {
@@ -49,7 +67,15 @@ class MyViewModel(private val dataService: DataService = DataService()): ViewMod
     }
 
     fun getUserUid() = viewModelScope.launch {
-        Log.i("User uid", dataService.getUserUid())
+        Log.i("User uid", dataService.getUserUid() ?: "User uid is null")
+    }
+
+    fun addToCart(shoeId: String, shoeToAdd: CartShoe = CartShoe(size = "size-10")) = viewModelScope.launch {
+        try {
+            dataService.addToCart(shoeId, shoeToAdd)
+        } catch (e: IllegalStateException){
+
+        }
     }
 
 }
