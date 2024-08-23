@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sneakershopapp.model.CartShoe
 import com.example.sneakershopapp.model.DataService
+import com.example.sneakershopapp.model.FunctionResult
 import com.example.sneakershopapp.model.Shoe
 import com.example.sneakershopapp.model.Size
 import com.example.sneakershopapp.model.User
@@ -31,13 +32,25 @@ class MyViewModel(private val dataService: DataService = DataService()): ViewMod
 
 
     fun getShoes() = viewModelScope.launch {
-        val shoes = dataService.getShoes()
-        _shoes.value = shoes
+        when(val shoes = dataService.getShoes()){
+            is FunctionResult.Success -> {
+                _shoes.value = shoes.data
+            }
+            is FunctionResult.Error -> {
+                Log.e("MyViewModel", shoes.message)
+            }
+        }
     }
 
     fun getFavorites() = viewModelScope.launch {
-        val favorites = dataService.getFavorites()
-        _favorites.value = favorites
+        when(val favorites = dataService.getFavorites()){
+            is FunctionResult.Success -> {
+                _favorites.value = favorites.data
+            }
+            is FunctionResult.Error -> {
+                Log.e("MyViewModel", favorites.message)
+            }
+        }
     }
 
     fun markShoeAsFavorite(shoeId: String = "ET96Bi8yKUJzOEGHCCCI") = viewModelScope.launch {
@@ -67,14 +80,24 @@ class MyViewModel(private val dataService: DataService = DataService()): ViewMod
     }
 
     fun getUserUid() = viewModelScope.launch {
-        Log.i("User uid", dataService.getUserUid() ?: "User uid is null")
+        when(val userUid = dataService.getUserUid()){
+            is FunctionResult.Success -> {
+                Log.i("User uid", userUid.data)
+            }
+            is FunctionResult.Error -> {
+                Log.e("MyViewModel", userUid.message)
+            }
+        }
     }
 
     fun addToCart(shoeId: String, shoeToAdd: CartShoe = CartShoe(size = "size-10")) = viewModelScope.launch {
-        try {
-            dataService.addToCart(shoeId, shoeToAdd)
-        } catch (e: IllegalStateException){
-
+        when(val result = dataService.addToCart(shoeId, shoeToAdd)){
+            is FunctionResult.Success -> {
+                Log.i("MyViewModel", "Shoe added to cart successfully")
+            }
+            is FunctionResult.Error -> {
+                Log.e("MyViewModel", result.message)
+            }
         }
     }
 
