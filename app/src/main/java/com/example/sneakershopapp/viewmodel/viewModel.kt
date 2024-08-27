@@ -7,13 +7,8 @@ import com.example.sneakershopapp.model.CartShoe
 import com.example.sneakershopapp.model.DataService
 import com.example.sneakershopapp.model.FunctionResult
 import com.example.sneakershopapp.model.Shoe
-import com.example.sneakershopapp.model.Size
 import com.example.sneakershopapp.model.User
-import com.example.sneakershopapp.model.getPreviewUrl
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 

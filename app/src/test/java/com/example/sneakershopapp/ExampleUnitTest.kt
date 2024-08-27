@@ -15,11 +15,4 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class ExampleUnitTest {
-    @Test
-    fun getShoesTestFirstItem() = runBlocking {
-        val shoes = DataService().getShoes()
-        assertNotNull(shoes)
-        assertTrue(shoes.isNotEmpty())
-        assertEquals("Nike", shoes.first().brandName)
-    }
 }

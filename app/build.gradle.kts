@@ -94,5 +94,11 @@ dependencies {
     // Jetpack DataStore
     implementation(libs.androidx.datastore)
 
+    // SplashScreen API
+    implementation(libs.androidx.core.splashscreen)
+
+    // constraint layout
+    implementation (libs.androidx.constraintlayout.compose)
+
     testImplementation(libs.androidx.core)
 }
