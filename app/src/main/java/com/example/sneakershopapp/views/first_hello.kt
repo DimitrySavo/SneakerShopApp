@@ -24,7 +24,7 @@ import com.example.sneakershopapp.R
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 
 @Composable
-fun First_hello_screen(modifier: Modifier = Modifier) {
+fun FirstHelloScreen(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.then(
             Modifier
@@ -149,6 +149,6 @@ fun First_hello_screen(modifier: Modifier = Modifier) {
 @Composable
 private fun first_screen_preview() {
     SneakerShopAppTheme {
-        First_hello_screen()
+        FirstHelloScreen()
     }
 }
