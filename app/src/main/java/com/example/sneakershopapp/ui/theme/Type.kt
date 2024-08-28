@@ -2,9 +2,27 @@ package com.example.sneakershopapp.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.sneakershopapp.R
+
+val Roboto = FontFamily(
+    Font(R.font.roboto_black, FontWeight.Black, FontStyle.Normal),
+    Font(R.font.roboto_black_italic, FontWeight.Black, FontStyle.Italic),
+    Font(R.font.roboto_bold, FontWeight.Bold, FontStyle.Normal),
+    Font(R.font.roboto_bold_italic, FontWeight.Bold, FontStyle.Italic),
+    Font(R.font.roboto_medium, FontWeight.Medium, FontStyle.Normal),
+    Font(R.font.roboto_medium_italic, FontWeight.Medium, FontStyle.Italic),
+    Font(R.font.roboto_regular, FontWeight.Normal, FontStyle.Normal),
+    Font(R.font.roboto_italic, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.roboto_light, FontWeight.Light, FontStyle.Normal),
+    Font(R.font.roboto_light_italic, FontWeight.Light, FontStyle.Italic),
+    Font(R.font.roboto_thin, FontWeight.Thin, FontStyle.Normal),
+    Font(R.font.roboto_thin_italic, FontWeight.Thin, FontStyle.Italic)
+)
 
 // Set of Material typography styles to start with
 val Typography = Typography(
@@ -16,11 +34,11 @@ val Typography = Typography(
         letterSpacing = 0.5.sp
     ),
     titleLarge = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 26.sp,
-        lineHeight = 18.sp,
-        letterSpacing = 1.5.sp
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Black,
+        fontSize = 30.sp,
+        lineHeight = 13.sp,
+        letterSpacing = 0.3.sp
     )
     /* Other default text styles to override
     titleLarge = TextStyle(
