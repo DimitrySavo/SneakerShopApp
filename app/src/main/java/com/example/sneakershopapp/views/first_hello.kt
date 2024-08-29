@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -101,45 +98,7 @@ fun FirstHelloScreen(modifier: Modifier = Modifier) {
                     .weight(2f)
                     .fillMaxWidth()
             ) {
-                ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-                    val (helloImage, firstCurved, secondCurved) = createRefs()
-                    Image(painter = painterResource(id = R.drawable.background_smile),
-                        contentDescription = "smile",
-                        modifier = Modifier
-                            .constrainAs(helloImage) {
-                                top.linkTo(parent.top)
-                                start.linkTo(parent.start)
-                            }
-                            .padding(start = 50.dp, top = 50.dp)
-                            .size(45.dp)
-                            .alpha(0.5f)
-                    )
 
-                    Image(painter = painterResource(id = R.drawable.curve_background_lines),
-                        contentDescription = "curve lines on background",
-                        modifier = Modifier
-                            .constrainAs(firstCurved) {
-                                bottom.linkTo(parent.bottom)
-                                start.linkTo(parent.start)
-                            }
-                            .padding(start = 50.dp, bottom = 120.dp)
-                            .size(100.dp)
-                            .alpha(0.5f)
-                    )
-
-                    Image(painter = painterResource(id = R.drawable.curve_background_lines),
-                        contentDescription = "curve lines on background",
-                        modifier = Modifier
-                            .constrainAs(secondCurved) {
-                                bottom.linkTo(parent.bottom)
-                                end.linkTo(parent.end)
-                            }
-                            .padding(end = 30.dp, bottom = 180.dp)
-                            .size(100.dp)
-                            .alpha(0.5f)
-                            .rotate(90f)
-                    )
-                }
             }
         }
     }
