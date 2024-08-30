@@ -100,5 +100,8 @@ dependencies {
     // constraint layout
     implementation (libs.androidx.constraintlayout.compose)
 
+    // pager indicators
+    implementation(libs.accompanist.pager.indicators)
+
     testImplementation(libs.androidx.core)
 }
