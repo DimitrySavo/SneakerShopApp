@@ -103,5 +103,8 @@ dependencies {
     // pager indicators
     implementation(libs.accompanist.pager.indicators)
 
+    // navigation
+    implementation(libs.androidx.navigation.compose)
+
     testImplementation(libs.androidx.core)
 }

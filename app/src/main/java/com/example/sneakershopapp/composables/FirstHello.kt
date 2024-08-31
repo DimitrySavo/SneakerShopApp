@@ -1,4 +1,4 @@
-package com.example.sneakershopapp.views
+package com.example.sneakershopapp.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

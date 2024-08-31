@@ -1,4 +1,4 @@
-package com.example.sneakershopapp.views
+package com.example.sneakershopapp.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,52 +17,36 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.sneakershopapp.R
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 
 @Composable
-fun SecondHelloScreen(modifier: Modifier = Modifier) {
+fun ThirdHelloScreen(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.then(
             Modifier
                 .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.primary)
+                .background(MaterialTheme.colorScheme.primary)
         )
     ) {
         Box(
             modifier = Modifier
-                .weight(1f)
+                .weight(1.3f)
                 .fillMaxWidth()
         ) {
-            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-                val image = createRef()
-                Image(
-                    painter = painterResource(id = R.drawable.shoe_second_hello),
-                    contentDescription = "group of shoe and art",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .constrainAs(image) {
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
-                )
-            }
+            Image(
+                painter = painterResource(id = R.drawable.shoe_third_hello),
+                contentScale = ContentScale.Fit,
+                contentDescription = "shoe without leg for third hello screen",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.BottomCenter)
+            )
         }
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        Box(modifier = Modifier.weight(1f)) {
+            Column {
                 Text(
-                    text = "Начнем\nпутешествие",
-                    style = MaterialTheme.typography.titleMedium,
+                    text = "У Вас Есть Сила\nЧтобы", style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
@@ -70,7 +54,7 @@ fun SecondHelloScreen(modifier: Modifier = Modifier) {
                         .fillMaxWidth()
                 )
                 Text(
-                    text = "Умная, великолепная и модная\n коллекция. Изучите сейчас!",
+                    text = "В вашей комнате много красивых и\n привлекательных растений",
                     style = MaterialTheme.typography.labelSmall,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -81,6 +65,7 @@ fun SecondHelloScreen(modifier: Modifier = Modifier) {
         }
     }
 }
+
 
 @Preview(device = "spec:width=411dp,height=891dp,dpi=420") // Pixel 4
 @Preview(device = "spec:width=360dp,height=740dp,dpi=320") // Nexus 5
@@ -95,6 +80,6 @@ fun SecondHelloScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun Second_screen_preview() {
     SneakerShopAppTheme {
-        SecondHelloScreen()
+        ThirdHelloScreen()
     }
 }

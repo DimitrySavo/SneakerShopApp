@@ -54,4 +54,15 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
             }
         }
     }
+
+    fun isUserRegistered() : Boolean {
+        return when(val userUid = dataService.getUserUid()){
+            is FunctionResult.Success -> {
+                userUid.data != null
+            }
+            is FunctionResult.Error -> {
+                throw IllegalStateException(userUid.message)
+            }
+        }
+    }
 }

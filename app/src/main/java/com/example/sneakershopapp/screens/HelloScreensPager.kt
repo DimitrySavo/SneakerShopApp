@@ -1,4 +1,4 @@
-package com.example.sneakershopapp.views
+package com.example.sneakershopapp.screens
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -32,12 +32,16 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.sneakershopapp.composables.FirstHelloScreen
+import com.example.sneakershopapp.composables.SecondHelloScreen
+import com.example.sneakershopapp.composables.ThirdHelloScreen
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HelloScreensPager(modifier: Modifier = Modifier, initialPage: Int = 0) {
+fun HelloScreensPager(modifier: Modifier = Modifier, initialPage: Int = 0, navController: NavController) {
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
@@ -77,7 +81,9 @@ fun HelloScreensPager(modifier: Modifier = Modifier, initialPage: Int = 0) {
                         scope.launch {
                             val nextPage = pagerState.currentPage + 1
                             if (nextPage > pagerState.pageCount - 1) {
-                                //перемещает на окно регистрации и закрывает эту функцию
+                                navController.navigate("login"){
+                                    popUpTo("hello") { inclusive = true}
+                                }
                             } else{
                                 pagerState.animateScrollToPage(nextPage)
                             }
@@ -157,6 +163,6 @@ fun CustomPagerIndicator(
 @Composable
 private fun HelloPagerPreview() {
     SneakerShopAppTheme {
-        HelloScreensPager(initialPage = 0)
+
     }
 }
