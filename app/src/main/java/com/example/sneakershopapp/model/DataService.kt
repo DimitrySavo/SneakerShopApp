@@ -8,7 +8,7 @@ import com.google.firebase.firestore.getField
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 
-class DataService{
+class  DataService{
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
@@ -105,11 +105,15 @@ class DataService{
         auth.signOut()
     }
 
-    fun getUserUid(): FunctionResult<String> {
-        return if(auth.currentUser == null){
-            FunctionResult.Error("User is null")
-        } else {
-            FunctionResult.Success(auth.currentUser!!.uid)
+    fun getUserUid(): FunctionResult<String?> {
+        return try {
+            if(auth.currentUser == null){
+                FunctionResult.Success(null)
+            } else {
+                FunctionResult.Success(auth.currentUser!!.uid)
+            }
+        } catch (e: Exception) {
+            FunctionResult.Error(e.toString())
         }
     }
 }

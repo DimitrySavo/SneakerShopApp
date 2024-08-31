@@ -26,8 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Canvas
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -35,7 +33,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
-import com.google.accompanist.pager.HorizontalPagerIndicator
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -103,7 +100,7 @@ fun HelloScreensPager(modifier: Modifier = Modifier, initialPage: Int = 0) {
                         text = if(pagerState.currentPage == pagerState.pageCount - 1) "Начать" else "Дальше",
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.bodyMedium
-                    ) // Прописать логику изменения надписи с дальше на начать
+                    )
                 }
             }
         }

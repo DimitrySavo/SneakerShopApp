@@ -33,6 +33,8 @@ import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 import com.example.sneakershopapp.viewmodel.MyViewModel
 
 class MainActivity : ComponentActivity() {
+    private val viewModel by viewModels<MyViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
