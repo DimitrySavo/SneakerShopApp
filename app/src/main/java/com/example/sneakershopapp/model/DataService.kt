@@ -2,6 +2,7 @@ package com.example.sneakershopapp.model
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.getField
@@ -66,9 +67,9 @@ class  DataService{
         val currentUserUid = auth.currentUser?.uid ?: return FunctionResult.Error("User is null")
         val shoeRef = db.collection("Shoes").document(shoeId).get().await()
         if(shoeRef.exists().not()){
-            throw IllegalStateException("Shoe not found")
+            return FunctionResult.Error("Shoe not found")
         } else if (shoeRef.toObject<Shoe>()?.sizes?.get(shoe.size)?.inStock == 0L){
-            throw IllegalStateException("Shoe is out of stock") // should replace with some better callbacks but for now it's ok
+            return FunctionResult.Error("Shoe is out of stock") // should replace with some better callbacks but for now it's ok
         }
         shoe.shoeRef = shoeRef.reference
         db.collection("users").document(currentUserUid).collection("cart").add(shoe).await() // cant use cloud functions because of free plan
@@ -96,8 +97,20 @@ class  DataService{
             Log.i("DataService", "loginUser: $email")
             return FunctionResult.Success(Unit)
         } catch (e: Exception) {
-            Log.e("DataService", "loginUser: ${e.message}")
-            return FunctionResult.Error(e.message ?: "Unknown error")
+            val errorMessage = when(e){
+                is FirebaseAuthException -> when(e.errorCode){
+                    "ERROR_INVALID_EMAIL" -> "Неверный формат email."
+                    "ERROR_USER_NOT_FOUND" -> "Пользователь не найден."
+                    "ERROR_WRONG_PASSWORD" -> "Неверный пароль."
+                    "ERROR_USER_DISABLED" -> "Аккаунт пользователя отключен."
+                    "ERROR_TOO_MANY_REQUESTS" -> "Слишком много попыток входа, попробуйте позже."
+                    else -> "Ошибка аутентификации: ${e.message}"
+                }
+                else -> "Неизвестная ошибка: ${e.message}"
+            }
+
+            Log.e("DataService", "loginUser: $errorMessage")
+            return FunctionResult.Error(errorMessage)
         }
     }
 

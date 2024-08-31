@@ -40,21 +40,28 @@ val Typography = Typography(
         lineHeight = 13.sp,
         letterSpacing = 0.3.sp
     ),
-    titleMedium = TextStyle(
+    titleMedium = TextStyle(                //используется для больших надписей заголовков
         fontFamily = Roboto,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Normal,
         fontSize = 30.sp,
         lineHeight = 36.sp,
         letterSpacing = 0.5.sp
     ),
-    labelSmall = TextStyle(
+    titleSmall = TextStyle(                 //используется для надписей под заголовками
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 22.sp,
+        letterSpacing = 0.2.sp
+    ),
+    labelSmall = TextStyle(                 //Надписи на втором и третьем приветственном экранах
         fontFamily = Roboto,
         fontWeight = FontWeight.Light,
         fontSize = 16.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.5.sp
     ),
-    bodyMedium = TextStyle(
+    bodyMedium = TextStyle(                 //используется для надписей на кнопках
         fontFamily = Roboto,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
