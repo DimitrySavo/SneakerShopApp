@@ -64,7 +64,7 @@ val Typography = Typography(
     bodyMedium = TextStyle(                 //используется для надписей на кнопках
         fontFamily = Roboto,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         lineHeight = 22.sp,
         letterSpacing = 0.2.sp
     )
