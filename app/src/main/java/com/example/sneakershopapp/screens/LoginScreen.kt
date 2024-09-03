@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.example.sneakershopapp.composables.BackIconButton
+import com.example.sneakershopapp.composables.DefaultOutlinedTextField
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 import com.example.sneakershopapp.viewmodel.UserViewModel
 
@@ -88,7 +89,7 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSecondary,
                 modifier = Modifier
-                    .constrainAs(instruction){
+                    .constrainAs(instruction) {
                         top.linkTo(hello.bottom)
                     }
                     .padding(bottom = 15.dp)
@@ -98,15 +99,38 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
-                    .constrainAs(emailLabel){
+                    .constrainAs(emailLabel) {
                         top.linkTo(instruction.bottom)
                         start.linkTo(parent.start)
                     }
+                    .padding(bottom = 10.dp)
             )
-            OutlinedTextField(value = user, onValueChange = {
-                user = it
-            }, shape = RoundedCornerShape(20), colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary))
+
+
+            DefaultOutlinedTextField(
+                Modifier
+                    .constrainAs(emailText) {
+                        top.linkTo(emailLabel.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                user,
+                "xyz@gmail.com"
+            ) { } // error сделать просто mutable state и менять его в зависимости от результата при нажатии кнопки
+
+            Text(
+                text = "Пароль",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .constrainAs(passwordLabel) {
+                        top.linkTo(emailText.bottom)
+                        start.linkTo(parent.start)
+                    }
+                    .padding(bottom = 10.dp)
+            )
         }
     }
 }
