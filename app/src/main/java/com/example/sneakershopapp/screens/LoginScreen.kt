@@ -121,7 +121,6 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                     .padding(bottom = 10.dp)
             )
 
-
             DefaultOutlinedTextField(
                 Modifier
                     .constrainAs(emailText) {
@@ -190,7 +189,9 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                 Text(
                     text = "Войти",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
                 )
             }
         }
@@ -216,7 +217,7 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
 
             ) {
                 Text(
-                    text = "Создать пользователя",
+                    text = " Создать пользователя",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground
                 )
