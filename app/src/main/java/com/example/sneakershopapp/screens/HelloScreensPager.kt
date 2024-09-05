@@ -1,5 +1,6 @@
 package com.example.sneakershopapp.screens
 
+import android.content.Context
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -163,6 +164,6 @@ fun CustomPagerIndicator(
 @Composable
 private fun HelloPagerPreview() {
     SneakerShopAppTheme {
-
+        
     }
 }
