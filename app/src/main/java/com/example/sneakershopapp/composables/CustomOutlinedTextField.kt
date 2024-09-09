@@ -1,6 +1,7 @@
 package com.example.sneakershopapp.composables
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,8 +19,9 @@ fun DefaultOutlinedTextField(
         value = value,
         onValueChange = { onValueChange() },
         colors = customOutlinedColors(),
+        textStyle = MaterialTheme.typography.bodyMedium,
         shape = RoundedCornerShape(20),
         modifier = modifier,
-        placeholder = { Text(text = placeholder) }
+        placeholder = { Text(text = placeholder, style = MaterialTheme.typography.bodyMedium) }
     )
 }

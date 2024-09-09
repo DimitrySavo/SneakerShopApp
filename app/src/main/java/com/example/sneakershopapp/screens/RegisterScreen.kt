@@ -65,7 +65,6 @@ fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavControl
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(500.dp)
                 .padding(vertical = 50.dp, horizontal = 30.dp)
         ) {
             val (backButton, register, instruction, nameLabel, nameText, emailLabel, emailText, passwordLabel, passwordText, personalDataAgree, registerButton) = createRefs()

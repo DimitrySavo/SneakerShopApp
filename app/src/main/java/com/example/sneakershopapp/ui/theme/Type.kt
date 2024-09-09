@@ -1,6 +1,9 @@
 package com.example.sneakershopapp.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -24,64 +27,85 @@ val Roboto = FontFamily(
     Font(R.font.roboto_thin_italic, FontWeight.Thin, FontStyle.Italic)
 )
 
-// Set of Material typography styles to start with
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    ),
-    titleLarge = TextStyle(
-        fontFamily = Roboto,
-        fontWeight = FontWeight.Black,
-        fontSize = 30.sp,
-        lineHeight = 13.sp,
-        letterSpacing = 0.3.sp
-    ),
-    titleMedium = TextStyle(                //используется для больших надписей заголовков
-        fontFamily = Roboto,
-        fontWeight = FontWeight.Normal,
-        fontSize = 30.sp,
-        lineHeight = 36.sp,
-        letterSpacing = 0.5.sp
-    ),
-    titleSmall = TextStyle(                 //используется для надписей под заголовками
-        fontFamily = Roboto,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 22.sp,
-        letterSpacing = 0.2.sp
-    ),
-    labelSmall = TextStyle(                 //Надписи на втором и третьем приветственном экранах
-        fontFamily = Roboto,
-        fontWeight = FontWeight.Light,
-        fontSize = 16.sp,
-        lineHeight = 20.sp,
-        letterSpacing = 0.5.sp
-    ),
-    bodyMedium = TextStyle(                 //используется для надписей на кнопках
-        fontFamily = Roboto,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 22.sp,
-        letterSpacing = 0.2.sp
+@Composable
+fun multipliedTypography(multiplier: Float = getFontMultiplier()) : Typography {
+    // Set of Material typography styles to start with
+    return Typography(
+        bodyLarge = TextStyle(
+            fontFamily = FontFamily.Default,
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp * multiplier,
+            lineHeight = 24.sp * multiplier,
+            letterSpacing = 0.5.sp
+        ),
+        titleLarge = TextStyle(                 //используется для заголовков экранов типа "регистрация, вход" и подобные.
+            fontFamily = Roboto,
+            fontWeight = FontWeight.Black,
+            fontSize = 30.sp * multiplier,
+            lineHeight = 13.sp * multiplier,
+            letterSpacing = 0.3.sp
+        ),
+        titleMedium = TextStyle(                //используется для надписи на третьем приветственном экране
+            fontFamily = Roboto,
+            fontWeight = FontWeight.Normal,
+            fontSize = 30.sp * multiplier,
+            lineHeight = 36.sp * multiplier,
+            letterSpacing = 0.5.sp
+        ),
+        titleSmall = TextStyle(                 //используется для надписей под заголовками
+            fontFamily = Roboto,
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp * multiplier,
+            lineHeight = 22.sp * multiplier,
+            letterSpacing = 0.2.sp
+        ),
+        labelSmall = TextStyle(                 //Надписи на втором и третьем приветственном экранах
+            fontFamily = Roboto,
+            fontWeight = FontWeight.Light,
+            fontSize = 16.sp * multiplier,
+            lineHeight = 20.sp * multiplier,
+            letterSpacing = 0.5.sp
+        ),
+        bodyMedium = TextStyle(                 //используется для надписей на кнопках
+            fontFamily = Roboto,
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp * multiplier,
+            lineHeight = 22.sp * multiplier,
+            letterSpacing = 0.2.sp
+        ),
+        labelMedium = TextStyle(                 //используется для заголовков, у которых шрифт такого же размера, что и у текста под ним
+            fontFamily = Roboto,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp * multiplier,
+            lineHeight = 22.sp * multiplier,
+            letterSpacing = 0.2.sp
+        )
+        /* Other default text styles to override
+        titleLarge = TextStyle(
+            fontFamily = FontFamily.Default,
+            fontWeight = FontWeight.Normal,
+            fontSize = 22.sp,
+            lineHeight = 28.sp,
+            letterSpacing = 0.sp
+        ),
+        labelSmall = TextStyle(
+            fontFamily = FontFamily.Default,
+            fontWeight = FontWeight.Medium,
+            fontSize = 11.sp,
+            lineHeight = 16.sp,
+            letterSpacing = 0.5.sp
+        )
+        */
     )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
-)
+}
+
+
+@Composable
+fun getFontMultiplier() : Float {
+    val screenHeight = LocalConfiguration.current.screenHeightDp
+    return when{
+        screenHeight < 1000 -> 1.0f
+        screenHeight in 1001..1499 -> 1.3f
+        else -> 1.8f
+    }
+}

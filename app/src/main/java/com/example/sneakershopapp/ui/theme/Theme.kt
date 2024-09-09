@@ -65,7 +65,7 @@ fun SneakerShopAppTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = multipliedTypography(),
         content = content
     )
 }

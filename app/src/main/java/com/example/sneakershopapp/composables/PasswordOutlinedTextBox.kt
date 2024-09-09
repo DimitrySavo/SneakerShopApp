@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,9 +39,10 @@ fun PasswordTextField(
         value = value,
         onValueChange = { onValueChange() },
         colors = customOutlinedColors(),
+        textStyle = MaterialTheme.typography.bodyMedium,
         shape = RoundedCornerShape(20),
         modifier = modifier,
-        placeholder = { Text(text = placeholder) },
+        placeholder = { Text(text = placeholder, style = MaterialTheme.typography.bodyMedium) },
         trailingIcon = {
             Icon(
                 imageVector = if (isShown) Icons.Default.Visibility else Icons.Default.VisibilityOff,
