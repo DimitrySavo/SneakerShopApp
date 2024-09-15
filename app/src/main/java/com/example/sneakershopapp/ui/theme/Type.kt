@@ -73,9 +73,9 @@ fun multipliedTypography(multiplier: Float = getFontMultiplier()) : Typography {
             lineHeight = 22.sp * multiplier,
             letterSpacing = 0.2.sp
         ),
-        labelMedium = TextStyle(                 //используется для заголовков, у которых шрифт такого же размера, что и у текста под ним
+        labelMedium = TextStyle(                 //используется для заголовков, у которых шрифт такого же размера, что и у текста под ним со стилем bodyMedium
             fontFamily = Roboto,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Medium,
             fontSize = 16.sp * multiplier,
             lineHeight = 22.sp * multiplier,
             letterSpacing = 0.2.sp

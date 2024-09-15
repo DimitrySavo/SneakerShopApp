@@ -86,3 +86,16 @@ fun customOutlinedColors(): TextFieldColors {
         focusedTrailingIconColor = MaterialTheme.colorScheme.onSecondary
     )
 }
+
+@Composable
+fun customOTPCellColors(): TextFieldColors {
+    return OutlinedTextFieldDefaults.colors(
+        unfocusedBorderColor = Color.Transparent,
+        focusedBorderColor = MaterialTheme.colorScheme.onTertiary,
+        errorBorderColor = MaterialTheme.colorScheme.error,
+        unfocusedContainerColor = MaterialTheme.colorScheme.onSurface,
+        disabledContainerColor = MaterialTheme.colorScheme.onSurface,
+        focusedContainerColor = MaterialTheme.colorScheme.onSurface,
+
+    )
+}

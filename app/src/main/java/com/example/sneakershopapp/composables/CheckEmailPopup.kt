@@ -73,7 +73,7 @@ fun CheckEmailPopup(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
     }
 }
 
-@Preview(widthDp = 411, heightDp = 891)
+@Preview(widthDp = 1440, heightDp = 2960)
 @Composable
 private fun PopupPreview() {
     SneakerShopAppTheme {
