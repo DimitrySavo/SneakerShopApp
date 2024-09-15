@@ -2,15 +2,10 @@ package com.example.sneakershopapp.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -41,36 +36,30 @@ fun OTPCodeField(modifier: Modifier = Modifier, otpLength: Int, onOtpComplete: (
 
     val focusRequesters = List(otpLength) { FocusRequester() }
 
-    BoxWithConstraints(
+    Row(
         modifier = Modifier.background(color = Color.Red).fillMaxWidth().then(modifier)
     ) {
-        val cellWidth = (maxWidth/otpLength)
+       repeat(otpLength){ index ->
+           OTPCodeCell(
+               Modifier.weight(1f).padding(4.dp),
+               index,
+               focusRequesters,
+               otpCode
+           ) { }
+       }
 
-        Row(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            for (i in 0 until otpLength) {
-                OTPCodeCell(i, focusRequesters, otpCode, cellWidth) { newOtp ->
-                    otpCode = newOtp
-                    if(otpCode.length == otpLength){
-                        onOtpComplete(otpCode)
-                    }
-                }
-            }
-
-            LaunchedEffect(Unit) {
-                focusRequesters[0].requestFocus()
-            }
+        LaunchedEffect(Unit) {
+            focusRequesters[0].requestFocus()
         }
     }
 }
 
 @Composable
 fun OTPCodeCell(
+    modifier: Modifier = Modifier,
     index: Int,
     focusRequesters: List<FocusRequester>,
     otpCode: String,
-    cellWidth: Dp,
     onOtpChange: (String) -> Unit
 ) {
     val isCurrentEnabled = index == otpCode.length
@@ -97,8 +86,7 @@ fun OTPCodeCell(
         colors = customOTPCellColors(),
         textStyle = MaterialTheme.typography.labelMedium,
         modifier = Modifier
-            .width(cellWidth)
-            .aspectRatio(0.5f)
+            .then(modifier)
             .clip(RoundedCornerShape(25))
             .focusRequester(focusRequesters[index])
             .focusable()
