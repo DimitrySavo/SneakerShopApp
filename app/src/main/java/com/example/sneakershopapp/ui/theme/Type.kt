@@ -42,7 +42,7 @@ fun multipliedTypography(multiplier: Float = getFontMultiplier()) : Typography {
             fontFamily = Roboto,
             fontWeight = FontWeight.Black,
             fontSize = 30.sp * multiplier,
-            lineHeight = 13.sp * multiplier,
+            lineHeight = 36.sp * multiplier,
             letterSpacing = 0.3.sp
         ),
         titleMedium = TextStyle(                //используется для надписи на третьем приветственном экране
@@ -105,7 +105,7 @@ fun getFontMultiplier() : Float {
     val screenHeight = LocalConfiguration.current.screenHeightDp
     return when{
         screenHeight < 1000 -> 1.0f
-        screenHeight in 1001..1499 -> 1.3f
-        else -> 1.8f
+        screenHeight in 1001..1499 -> 2f
+        else ->3f
     }
 }

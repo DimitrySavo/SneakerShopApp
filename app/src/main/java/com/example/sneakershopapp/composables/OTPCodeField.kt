@@ -37,7 +37,7 @@ fun OTPCodeField(modifier: Modifier = Modifier, otpLength: Int, onOtpComplete: (
     val focusRequesters = List(otpLength) { FocusRequester() }
 
     Row(
-        modifier = Modifier.background(color = Color.Red).fillMaxWidth().then(modifier)
+        modifier = Modifier.fillMaxWidth().then(modifier)
     ) {
        repeat(otpLength){ index ->
            OTPCodeCell(
@@ -84,9 +84,10 @@ fun OTPCodeCell(
         enabled = isCurrentEnabled,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         colors = customOTPCellColors(),
-        textStyle = MaterialTheme.typography.labelMedium,
+        textStyle = MaterialTheme.typography.titleLarge,
         modifier = Modifier
             .then(modifier)
+            .aspectRatio(0.5f, true) // тут темка наконец заработала, но почему то на самом маленьком preview высота блоков все еще не одинаковая
             .clip(RoundedCornerShape(25))
             .focusRequester(focusRequesters[index])
             .focusable()

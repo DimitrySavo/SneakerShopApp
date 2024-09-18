@@ -1,6 +1,7 @@
 package com.example.sneakershopapp.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,79 +24,92 @@ import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 fun OTPCodeCheckScreen(modifier: Modifier = Modifier) { //, navController: NavController, userViewModel: UserViewModel  после окончания верстки нужно вставить это назад в аргументы
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .background(color = MaterialTheme.colorScheme.background)
-    ) {
-        ConstraintLayout(
+     Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 50.dp, horizontal = 30.dp)
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .background(color = MaterialTheme.colorScheme.background)
         ) {
-            val (backButton, OTPCheckLabel, instruction, OTPCodeLabel, OTPField) = createRefs()
-
-            BackIconButton(
-                height = 40.dp, //заменить на адаптивные размеры как и все паддинги
-                width = 40.dp,
-                isEnabled = false,
+            ConstraintLayout(
                 modifier = Modifier
-                    .constrainAs(backButton) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                    }
+                    .fillMaxWidth()
+                    .padding(vertical = 50.dp, horizontal = 30.dp)
             ) {
-                // Через navControoler делает popBackStack и возвращает на экран login
-            }
+                val (backButton, OTPCheckLabel, instruction, OTPCodeLabel, OTPField, newCodeCounter) = createRefs()
 
-            Text(
-                text = "OTP проверка",
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .constrainAs(OTPCheckLabel) {
-                        top.linkTo(backButton.bottom)
+                BackIconButton(
+                    height = 40.dp, //заменить на адаптивные размеры как и все паддинги
+                    width = 40.dp,
+                    isEnabled = false,
+                    modifier = Modifier
+                        .constrainAs(backButton) {
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                        }
+                ) {
+                    // Через navControoler делает popBackStack и возвращает на экран login
+                }
+
+                Text(
+                    text = "OTP проверка",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier
+                        .constrainAs(OTPCheckLabel) {
+                            top.linkTo(backButton.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                        .padding(bottom = 10.dp)
+                )
+                Text(
+                    text = "Пожайлуста, проверьте свою электронную почту, чтобы увидеть код подтверждения",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    modifier = Modifier
+                        .constrainAs(instruction) {
+                            top.linkTo(OTPCheckLabel.bottom)
+                        }
+                        .fillMaxWidth()
+                        .padding(bottom = 45.dp)
+                )
+                Text(
+                    text = "OTP Код",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier
+                        .constrainAs(OTPCodeLabel) {
+                            start.linkTo(parent.start)
+                            top.linkTo(instruction.bottom)
+                        }
+                        .padding(bottom = 10.dp, start = 20.dp)
+                )
+                OTPCodeField(otpLength = 6, modifier = Modifier
+                    .constrainAs(OTPField) {
+                        top.linkTo(OTPCodeLabel.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
-                    .padding(bottom = 10.dp)
-            )
-            Text(
-                text = "Пожайлуста, проверьте свою электронную почту, чтобы увидеть код подтверждения",
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSecondary,
-                modifier = Modifier
-                    .constrainAs(instruction) {
-                        top.linkTo(OTPCheckLabel.bottom)
-                    }
-                    .fillMaxWidth()
-                    .padding(bottom = 45.dp)
-            )
-            Text(
-                text = "OTP Код",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier
-                    .constrainAs(OTPCodeLabel) {
-                        start.linkTo(parent.start)
-                        top.linkTo(instruction.bottom)
-                    }
-                    .padding(bottom = 10.dp)
-            )
-            OTPCodeField(otpLength = 6, modifier = Modifier
-                .constrainAs(OTPField) {
-                    top.linkTo(OTPCodeLabel.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-            ) {
+                    .padding(bottom = 20.dp)
+                ) {
 
+                }
+                Text(
+                    text = "Отправить новый код через: ",
+                    textAlign = TextAlign.Left,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    modifier = Modifier
+                        .constrainAs(newCodeCounter) {
+                            start.linkTo(parent.start)
+                            top.linkTo(OTPField.bottom)
+                        }
+                        .fillMaxWidth()
+                )
             }
         }
     }
-}
 
 @Preview(device = "spec:width=411dp,height=891dp,dpi=420") // Pixel 4
 @Preview(device = "spec:width=360dp,height=740dp,dpi=320") // Nexus 5
