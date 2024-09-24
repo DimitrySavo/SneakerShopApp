@@ -95,7 +95,9 @@ fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier) { //, navContr
                     .fillMaxWidth()
                     .padding(bottom = 40.dp),
                 email,
-                "xyz@gmail.com"
+                "xyz@gmail.com",
+                "",
+                { true }
             ) { } // error сделать просто mutable state и менять его в зависимости от результата при нажатии кнопки
 
             Button(

@@ -45,6 +45,7 @@ import androidx.navigation.NavController
 import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.DefaultOutlinedTextField
 import com.example.sneakershopapp.composables.PasswordTextField
+import com.example.sneakershopapp.composables.TextFieldTopLabel
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 import com.example.sneakershopapp.viewmodel.UserViewModel
 
@@ -72,7 +73,7 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                 .fillMaxWidth()
                 .padding(vertical = 50.dp, horizontal = 30.dp)
         ) {
-            val (backButton, hello, instruction, emailLabel, emailText, passwordLabel, passwordText, forgotPassword, logInButton) = createRefs()
+            val (backButton, hello, instruction, emailBlock, passwordBlock, forgotPassword, logInButton) = createRefs()
             BackIconButton(
                 height = 40.dp,
                 width = 40.dp,
@@ -109,61 +110,41 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                     .fillMaxWidth()
                     .padding(bottom = 15.dp)
             )
-            Text(
-                text = "Email",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+
+            TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(emailLabel) {
+                    .constrainAs(emailBlock){
                         top.linkTo(instruction.bottom)
                         start.linkTo(parent.start)
-                    }
-                    .padding(bottom = 10.dp)
-            )
-
-            DefaultOutlinedTextField(
-                Modifier
-                    .constrainAs(emailText) {
-                        top.linkTo(emailLabel.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .fillMaxWidth()
-                    .padding(bottom = 20.dp),
-                user,
-                "xyz@gmail.com"
-            ) { } // error сделать просто mutable state и менять его в зависимости от результата при нажатии кнопки
-
-            Text(
-                text = "Пароль",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier
-                    .constrainAs(passwordLabel) {
-                        top.linkTo(emailText.bottom)
-                        start.linkTo(parent.start)
-                    }
-                    .padding(bottom = 10.dp)
-            )
-            PasswordTextField(
-                modifier = Modifier
-                    .constrainAs(passwordText){
-                        top.linkTo(passwordLabel.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .fillMaxWidth()
-                    .padding(bottom = 5.dp),
-                value = password,
-                placeholder = "Пароль"
+                    },
+                labelText = "E-mail",
+                fieldValue = "",
+                placeholder = "xyz@gmail.com",
+                errorMessage = "",
+                errorValidator = { true }
             ) { }
+
+            TextFieldTopLabel(
+                modifier = Modifier
+                    .constrainAs(passwordBlock){
+                        top.linkTo(emailBlock.bottom)
+                        start.linkTo(parent.start)
+                    },
+                labelText = "Пароль",
+                placeholder = "*******",
+                fieldValue = "",
+                errorMessage = "",
+                errorValidator = { true }
+            ) {
+
+            }
 
 
             TextButton(
                 onClick = {},
                 modifier = Modifier
                     .constrainAs(forgotPassword) {
-                        top.linkTo(passwordText.bottom)
+                        top.linkTo(passwordBlock.bottom)
                         end.linkTo(parent.end)
                     }
                     .padding(bottom = 50.dp)

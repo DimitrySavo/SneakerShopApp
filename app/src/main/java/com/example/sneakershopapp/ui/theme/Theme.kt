@@ -12,9 +12,14 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import com.example.sneakershopapp.utils.PaddingValues
+import com.example.sneakershopapp.utils.getPaddingValues
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -46,6 +51,8 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+val LocalPaddingValues = compositionLocalOf { PaddingValues(0.dp, 0.dp, 0.dp, 0.dp, 128.dp) }
+
 @Composable
 fun SneakerShopAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -68,6 +75,13 @@ fun SneakerShopAppTheme(
         typography = multipliedTypography(),
         content = content
     )
+}
+
+@Composable
+fun ProvidePadding(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalPaddingValues provides getPaddingValues()) {
+        content()
+    }
 }
 
 @Composable
@@ -99,3 +113,4 @@ fun customOTPCellColors(): TextFieldColors {
 
     )
 }
+

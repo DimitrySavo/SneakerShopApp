@@ -39,6 +39,7 @@ import androidx.test.services.storage.file.PropertyFile.Column
 import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.DefaultOutlinedTextField
 import com.example.sneakershopapp.composables.PasswordTextField
+import com.example.sneakershopapp.composables.TextFieldTopLabel
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 
 @Composable
@@ -67,7 +68,7 @@ fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavControl
                 .fillMaxWidth()
                 .padding(vertical = 50.dp, horizontal = 30.dp)
         ) {
-            val (backButton, register, instruction, nameLabel, nameText, emailLabel, emailText, passwordLabel, passwordText, personalDataAgree, registerButton) = createRefs()
+            val (backButton, register, instruction, nameBlock, surnameBlock, emailBlock, passwordBlock, personalDataAgree, registerButton) = createRefs()
             BackIconButton(
                 height = 40.dp,
                 width = 40.dp,
@@ -106,85 +107,63 @@ fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavControl
                     .padding(bottom = 15.dp)
             )
 
-            Text(
-                text = "Ваше имя",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+            TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(nameLabel) {
+                    .constrainAs(nameBlock){
                         top.linkTo(instruction.bottom)
                         start.linkTo(parent.start)
-                    }
-                    .padding(bottom = 10.dp)
-            )
+                    },
+                labelText = "Ваше имя",
+                fieldValue = "",
+                placeholder = "xxxxxx",
+                errorMessage = "",
+                errorValidator = { true }
+            ) { }
 
-            DefaultOutlinedTextField(
-                Modifier
-                    .constrainAs(nameText) {
-                        top.linkTo(nameLabel.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .fillMaxWidth()
-                    .padding(bottom = 20.dp),
-                name,
-                "xxxxxxxx"
-            ) { } // error сделать просто mutable state и менять его в зависимости от результата при нажатии кнопки
-
-            Text(
-                text = "Email",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+            TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(emailLabel) {
-                        top.linkTo(nameText.bottom)
+                    .constrainAs(surnameBlock){
+                        top.linkTo(nameBlock.bottom)
                         start.linkTo(parent.start)
-                    }
-                    .padding(bottom = 10.dp)
-            )
+                    },
+                labelText = "Ваша фамилия",
+                fieldValue = "",
+                placeholder = "xxxxxxxx",
+                errorMessage = "",
+                errorValidator = { true }
+            ) { }
 
-            DefaultOutlinedTextField(
-                Modifier
-                    .constrainAs(emailText) {
-                        top.linkTo(emailLabel.bottom)
+            TextFieldTopLabel(
+                modifier = Modifier
+                    .constrainAs(emailBlock){
+                        top.linkTo(surnameBlock.bottom)
                         start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .fillMaxWidth()
-                    .padding(bottom = 40.dp),
-                email,
-                "xyz@gmail.com"
-            ) { } // error сделать просто mutable state и менять его в зависимости от результата при нажатии кнопки
+                    },
+                labelText = "E-mail",
+                placeholder = "xyz@gmail.com",
+                fieldValue = "",
+                errorMessage = "",
+                errorValidator = { true }
+            ) { }
 
-            Text(
-                text = "Пароль",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+            TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(passwordLabel) {
-                        top.linkTo(emailText.bottom)
+                    .constrainAs(passwordBlock){
+                        top.linkTo(emailBlock.bottom)
                         start.linkTo(parent.start)
-                    }
-                    .padding(bottom = 10.dp)
-            )
-            PasswordTextField(
-                modifier = Modifier
-                    .constrainAs(passwordText) {
-                        top.linkTo(passwordLabel.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .fillMaxWidth()
-                    .padding(bottom = 5.dp),
-                value = password,
-                placeholder = "Пароль"
+                    },
+                labelText = "Пароль",
+                fieldValue = "",
+                placeholder = "*******",
+                errorMessage = "",
+                errorValidator = { true }
             ) { }
 
             Row(
                 modifier = Modifier
                     .constrainAs(personalDataAgree) {
                         start.linkTo(parent.start)
-                        top.linkTo(passwordText.bottom)
+                        top.linkTo(passwordBlock.bottom)
                     }
                     .padding(bottom = 5.dp),
                 verticalAlignment = Alignment.CenterVertically
