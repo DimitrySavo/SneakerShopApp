@@ -51,7 +51,7 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
-val LocalPaddingValues = compositionLocalOf { PaddingValues(0.dp, 0.dp, 0.dp, 0.dp, 128.dp) }
+val LocalPaddingValues = compositionLocalOf { PaddingValues() }
 
 @Composable
 fun SneakerShopAppTheme(

@@ -22,8 +22,6 @@ fun BackButtonMiddleLabel(modifier: Modifier = Modifier, labelText: String, onCl
     ) {
         BackIconButton(
             isEnabled = true,
-            height = 40.dp,
-            width = 40.dp,
             modifier = Modifier
                 .align(alignment = Alignment.CenterStart)
         ) {

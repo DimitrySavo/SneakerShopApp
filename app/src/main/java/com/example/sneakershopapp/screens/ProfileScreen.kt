@@ -10,12 +10,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -27,6 +33,7 @@ import coil.request.ImageRequest
 import com.example.sneakershopapp.R
 import com.example.sneakershopapp.composables.BackButtonMiddleLabel
 import com.example.sneakershopapp.composables.TextFieldTopLabel
+import com.example.sneakershopapp.model.User
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.ProvidePadding
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
@@ -34,6 +41,10 @@ import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 @Composable
 fun ProfileScreen(modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
+
+    val user by remember {
+        mutableStateOf(User())
+    }
 
     Column(
         modifier = Modifier
@@ -44,13 +55,16 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 50.dp, horizontal = 30.dp)
+                .padding(
+                    vertical = LocalPaddingValues.current.vertical,
+                    horizontal = LocalPaddingValues.current.horizontal
+                )
         ) {
-            val (backButtonLabel, profileImage, changeProfileDataButton, nameBlock, surnameBlock, emailBlock, deliveryAddressBlock, phoneNumberBlock) = createRefs()
+            val (backButtonLabel, profileImage, changeProfileDataButton, nameBlock, surnameBlock, emailBlock, deliveryAddressBlock, phoneNumberBlock, saveButton) = createRefs()
 
             BackButtonMiddleLabel(
                 modifier = Modifier
-                    .constrainAs(backButtonLabel){
+                    .constrainAs(backButtonLabel) {
                         top.linkTo(parent.top)
                     },
                 labelText = "Профиль"
@@ -71,7 +85,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .size(LocalPaddingValues.current.profileImageSize)
                     .clip(CircleShape)
-                    .constrainAs(profileImage){
+                    .constrainAs(profileImage) {
                         top.linkTo(backButtonLabel.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
@@ -82,7 +96,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                 onClick = {},
                 contentPadding = PaddingValues(0.dp),
                 modifier = Modifier
-                    .constrainAs(changeProfileDataButton){
+                    .constrainAs(changeProfileDataButton) {
                         top.linkTo(profileImage.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
@@ -97,7 +111,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 
             TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(nameBlock){
+                    .constrainAs(nameBlock) {
                         top.linkTo(changeProfileDataButton.bottom)
                         start.linkTo(parent.start)
                     },
@@ -112,7 +126,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 
             TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(surnameBlock){
+                    .constrainAs(surnameBlock) {
                         top.linkTo(nameBlock.bottom)
                         start.linkTo(parent.start)
                     },
@@ -127,7 +141,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 
             TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(emailBlock){
+                    .constrainAs(emailBlock) {
                         top.linkTo(surnameBlock.bottom)
                         start.linkTo(parent.start)
                     },
@@ -142,7 +156,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 
             TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(deliveryAddressBlock){
+                    .constrainAs(deliveryAddressBlock) {
                         top.linkTo(emailBlock.bottom)
                         start.linkTo(parent.start)
                     },
@@ -157,17 +171,41 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 
             TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(phoneNumberBlock){
+                    .constrainAs(phoneNumberBlock) {
                         top.linkTo(deliveryAddressBlock.bottom)
                         start.linkTo(parent.start)
-                    },
+                    }
+                    .padding(bottom = LocalPaddingValues.current.underField),
                 labelText = "Телефон",
                 fieldValue = "",
                 placeholder = "X-(XXX)-XXX-XX-XX",
                 errorMessage = "",
                 errorValidator = { true }
             ) {
-                
+
+            }
+
+            Button(
+                onClick = {},
+                shape = RoundedCornerShape(20),
+                modifier = Modifier
+                    .constrainAs(saveButton){
+                        top.linkTo(phoneNumberBlock.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .fillMaxWidth()
+                    .alpha(
+                        if(false) 1f else 0.6f
+                    )
+            ) {
+                Text(
+                    text = "Сохранить",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .padding(vertical = (MaterialTheme.typography.bodyMedium.fontSize.value.dp/2))
+                )
             }
         }
     }

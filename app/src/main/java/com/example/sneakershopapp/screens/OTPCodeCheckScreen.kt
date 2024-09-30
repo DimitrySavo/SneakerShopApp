@@ -1,7 +1,6 @@
 package com.example.sneakershopapp.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.OTPCodeField
+import com.example.sneakershopapp.ui.theme.LocalPaddingValues
+import com.example.sneakershopapp.ui.theme.ProvidePadding
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 
 @Composable
@@ -33,13 +34,11 @@ fun OTPCodeCheckScreen(modifier: Modifier = Modifier) { //, navController: NavCo
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 50.dp, horizontal = 30.dp)
+                    .padding(vertical = LocalPaddingValues.current.vertical, horizontal = LocalPaddingValues.current.horizontal)
             ) {
                 val (backButton, OTPCheckLabel, instruction, OTPCodeLabel, OTPField, newCodeCounter) = createRefs()
 
                 BackIconButton(
-                    height = 40.dp, //заменить на адаптивные размеры как и все паддинги
-                    width = 40.dp,
                     isEnabled = false,
                     modifier = Modifier
                         .constrainAs(backButton) {
@@ -60,7 +59,7 @@ fun OTPCodeCheckScreen(modifier: Modifier = Modifier) { //, navController: NavCo
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                         }
-                        .padding(bottom = 10.dp)
+                        .padding(bottom = LocalPaddingValues.current.underLabel)
                 )
                 Text(
                     text = "Пожайлуста, проверьте свою электронную почту, чтобы увидеть код подтверждения",
@@ -72,7 +71,7 @@ fun OTPCodeCheckScreen(modifier: Modifier = Modifier) { //, navController: NavCo
                             top.linkTo(OTPCheckLabel.bottom)
                         }
                         .fillMaxWidth()
-                        .padding(bottom = 45.dp)
+                        .padding(bottom = LocalPaddingValues.current.vertical)
                 )
                 Text(
                     text = "OTP Код",
@@ -83,7 +82,7 @@ fun OTPCodeCheckScreen(modifier: Modifier = Modifier) { //, navController: NavCo
                             start.linkTo(parent.start)
                             top.linkTo(instruction.bottom)
                         }
-                        .padding(bottom = 10.dp, start = 20.dp)
+                        .padding(bottom = LocalPaddingValues.current.underLabel, start = 20.dp)
                 )
                 OTPCodeField(otpLength = 6, modifier = Modifier
                     .constrainAs(OTPField) {
@@ -91,7 +90,7 @@ fun OTPCodeCheckScreen(modifier: Modifier = Modifier) { //, navController: NavCo
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
-                    .padding(bottom = 20.dp)
+                    .padding(bottom = LocalPaddingValues.current.underField)
                 ) {
 
                 }
@@ -123,7 +122,9 @@ fun OTPCodeCheckScreen(modifier: Modifier = Modifier) { //, navController: NavCo
 @Preview(device = "spec:width=768dp,height=1024dp,dpi=160") // Nexus 7
 @Composable
 private fun HelloPagerPreview() {
-    SneakerShopAppTheme {
-        OTPCodeCheckScreen()
+    ProvidePadding {
+        SneakerShopAppTheme {
+            OTPCodeCheckScreen()
+        }
     }
 }

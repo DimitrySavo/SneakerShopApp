@@ -46,6 +46,7 @@ import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.DefaultOutlinedTextField
 import com.example.sneakershopapp.composables.PasswordTextField
 import com.example.sneakershopapp.composables.TextFieldTopLabel
+import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 import com.example.sneakershopapp.viewmodel.UserViewModel
 
@@ -59,9 +60,7 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
     var password by remember {
         mutableStateOf("")
     }
-
-
-
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,12 +70,10 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 50.dp, horizontal = 30.dp)
+                .padding(vertical = LocalPaddingValues.current.vertical, horizontal = LocalPaddingValues.current.horizontal)
         ) {
             val (backButton, hello, instruction, emailBlock, passwordBlock, forgotPassword, logInButton) = createRefs()
             BackIconButton(
-                height = 40.dp,
-                width = 40.dp,
                 isEnabled = false,
                 modifier = Modifier
                     .constrainAs(backButton) {
@@ -96,7 +93,7 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
-                    .padding(bottom = 10.dp)
+                    .padding(bottom = LocalPaddingValues.current.underLabel)
             )
             Text(
                 text = "Заполните Свои данные или продолжите через социальные медиа",
@@ -108,7 +105,7 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                         top.linkTo(hello.bottom)
                     }
                     .fillMaxWidth()
-                    .padding(bottom = 15.dp)
+                    .padding(bottom = LocalPaddingValues.current.underField)
             )
 
             TextFieldTopLabel(
@@ -116,7 +113,8 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                     .constrainAs(emailBlock){
                         top.linkTo(instruction.bottom)
                         start.linkTo(parent.start)
-                    },
+                    }
+                ,
                 labelText = "E-mail",
                 fieldValue = "",
                 placeholder = "xyz@gmail.com",
@@ -147,7 +145,7 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                         top.linkTo(passwordBlock.bottom)
                         end.linkTo(parent.end)
                     }
-                    .padding(bottom = 50.dp)
+                    .padding(bottom = LocalPaddingValues.current.vertical)
             ) {
                 Text(
                     text = "Восстановить",
@@ -172,7 +170,7 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = (MaterialTheme.typography.bodyMedium.fontSize.value.dp / 2))
                 )
             }
         }
@@ -182,7 +180,7 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
         Row(
           modifier = Modifier
               .fillMaxWidth()
-              .padding(10.dp),
+              .padding(LocalPaddingValues.current.underField),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {

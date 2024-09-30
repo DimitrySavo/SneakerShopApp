@@ -40,6 +40,8 @@ import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.DefaultOutlinedTextField
 import com.example.sneakershopapp.composables.PasswordTextField
 import com.example.sneakershopapp.composables.TextFieldTopLabel
+import com.example.sneakershopapp.ui.theme.LocalPaddingValues
+import com.example.sneakershopapp.ui.theme.ProvidePadding
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 
 @Composable
@@ -66,12 +68,10 @@ fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavControl
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 50.dp, horizontal = 30.dp)
+                .padding(vertical = LocalPaddingValues.current.vertical, horizontal = LocalPaddingValues.current.horizontal)
         ) {
             val (backButton, register, instruction, nameBlock, surnameBlock, emailBlock, passwordBlock, personalDataAgree, registerButton) = createRefs()
             BackIconButton(
-                height = 40.dp,
-                width = 40.dp,
                 isEnabled = false,
                 modifier = Modifier
                     .constrainAs(backButton) {
@@ -92,7 +92,7 @@ fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavControl
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
-                    .padding(bottom = 10.dp)
+                    .padding(bottom = LocalPaddingValues.current.underLabel)
             )
             Text(
                 text = "Заполните Свои данные или продолжите через социальные медиа",
@@ -104,7 +104,7 @@ fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavControl
                         top.linkTo(register.bottom)
                     }
                     .fillMaxWidth()
-                    .padding(bottom = 15.dp)
+                    .padding(bottom = LocalPaddingValues.current.underField)
             )
 
             TextFieldTopLabel(
@@ -165,7 +165,7 @@ fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavControl
                         start.linkTo(parent.start)
                         top.linkTo(passwordBlock.bottom)
                     }
-                    .padding(bottom = 5.dp),
+                    .padding(bottom = LocalPaddingValues.current.underField),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
@@ -181,7 +181,7 @@ fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavControl
                         contentDescription = "",
                         modifier = Modifier
                             .padding(5.dp)
-                            .size(16.dp)
+                            .size(LocalPaddingValues.current.smallIconSize)
                     )
                 }
                 Text(
@@ -209,7 +209,7 @@ fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavControl
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = (MaterialTheme.typography.bodyMedium.fontSize.value.dp / 2))
                 )
             }
         }
@@ -219,7 +219,7 @@ fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavControl
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
+                .padding(LocalPaddingValues.current.underField),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -256,7 +256,9 @@ fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavControl
 @Preview(device = "spec:width=768dp,height=1024dp,dpi=160") // Nexus 7
 @Composable
 private fun HelloPagerPreview() {
-    SneakerShopAppTheme {
-        RegisterScreen()
+    ProvidePadding {
+        SneakerShopAppTheme {
+            RegisterScreen()
+        }
     }
 }

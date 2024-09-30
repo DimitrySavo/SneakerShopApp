@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.PasswordTextField
+import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 
 @Composable
@@ -34,13 +35,11 @@ fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavCon
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 50.dp, horizontal = 30.dp)
+                .padding(vertical = LocalPaddingValues.current.vertical, horizontal = LocalPaddingValues.current.horizontal)
         ) {
             val (backButton, newPasswordTitle, newPasswordLabel, newPasswordField, repeatNewPasswordLabel, repeatNewPasswordField, approveButton) = createRefs()
 
             BackIconButton(
-                height = 40.dp, //заменить на адаптивные размеры как и все паддинги
-                width = 40.dp,
                 isEnabled = false,
                 modifier = Modifier
                     .constrainAs(backButton) {
@@ -62,7 +61,7 @@ fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavCon
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
-                    .padding(bottom = 40.dp)
+                    .padding(bottom = LocalPaddingValues.current.vertical)
             )
             Text(
                 text = "Новый пароль: ",
@@ -73,7 +72,7 @@ fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavCon
                         top.linkTo(newPasswordTitle.bottom)
                         start.linkTo(parent.start)
                     }
-                    .padding(bottom = 10.dp)
+                    .padding(bottom = LocalPaddingValues.current.underLabel)
             )
 
             PasswordTextField(
@@ -83,7 +82,7 @@ fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavCon
                         start.linkTo(parent.start)
                     }
                     .fillMaxWidth()
-                    .padding(bottom = 20.dp),
+                    .padding(bottom = LocalPaddingValues.current.underField),
                 value = "",
                 placeholder = "Пароль"
             ) { }
@@ -97,7 +96,7 @@ fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavCon
                         top.linkTo(newPasswordField.bottom)
                         start.linkTo(parent.start)
                     }
-                    .padding(bottom = 10.dp)
+                    .padding(bottom = LocalPaddingValues.current.underLabel)
             )
 
             PasswordTextField(
@@ -107,7 +106,7 @@ fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavCon
                         start.linkTo(parent.start)
                     }
                     .fillMaxWidth()
-                    .padding(bottom = 40.dp),
+                    .padding(bottom = LocalPaddingValues.current.vertical),
                 value = "",
                 placeholder = "Пароль"
             ) { }
@@ -129,7 +128,7 @@ fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavCon
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = (MaterialTheme.typography.bodyMedium.fontSize.value.dp/2))
                 )
             }
         }

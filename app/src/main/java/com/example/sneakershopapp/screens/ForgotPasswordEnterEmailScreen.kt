@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.DefaultOutlinedTextField
+import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 
 @Composable
@@ -43,13 +44,11 @@ fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier) { //, navContr
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 50.dp, horizontal = 30.dp)
+                .padding(vertical = LocalPaddingValues.current.vertical, horizontal = LocalPaddingValues.current.horizontal)
         ) {
             val (backButton, forgotPasswordTitle, instruction, emailText, getCode) = createRefs()
 
             BackIconButton(
-                height = 40.dp,
-                width = 40.dp,
                 isEnabled = false,
                 modifier = Modifier
                     .constrainAs(backButton) {
@@ -70,7 +69,7 @@ fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier) { //, navContr
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
-                    .padding(bottom = 10.dp)
+                    .padding(bottom = LocalPaddingValues.current.underLabel)
             )
             Text(
                 text = "Введите свою почту для сброса пароля",
@@ -82,7 +81,7 @@ fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier) { //, navContr
                         top.linkTo(forgotPasswordTitle.bottom)
                     }
                     .fillMaxWidth()
-                    .padding(bottom = 45.dp)
+                    .padding(bottom = LocalPaddingValues.current.vertical)
             )
 
             DefaultOutlinedTextField(
@@ -93,7 +92,7 @@ fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier) { //, navContr
                         end.linkTo(parent.end)
                     }
                     .fillMaxWidth()
-                    .padding(bottom = 40.dp),
+                    .padding(bottom = LocalPaddingValues.current.vertical),
                 email,
                 "xyz@gmail.com",
                 "",
@@ -117,7 +116,7 @@ fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier) { //, navContr
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = (MaterialTheme.typography.bodyMedium.fontSize.value.dp/2))
                 )
             }
 
