@@ -3,11 +3,17 @@ package com.example.sneakershopapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sneakershopapp.SneakerApplication
 import com.example.sneakershopapp.model.DataService
 import com.example.sneakershopapp.model.FunctionResult
 import com.example.sneakershopapp.model.User
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -21,7 +27,19 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
     private val _userUid = MutableStateFlow<String?>(null)
     val userUid = _userUid.asStateFlow()
 
+    private val _otpCode = MutableStateFlow<String?>(null)
+    val otpCode = _otpCode.asStateFlow()
+
+    private val _otpCodeTimer = MutableStateFlow(0L)
+    val otpCodeTimer = _otpCodeTimer.asStateFlow()
+
+    private val _errorMessage = MutableSharedFlow<String>()
+    val errorMessage = _errorMessage.asSharedFlow()
+
+    private var timerJob: Job? = null
+
     init {
+        Log.i("UserViewModel init", "Get into init block of userViewModel")
         getUserUid()
     }
 
@@ -42,6 +60,12 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
     fun addUser() = viewModelScope.launch {
         dataService.registerUser(_user.value, _password.value)
     }
+
+    fun loginUser() = viewModelScope.launch {
+        dataService.loginUser(_user.value.email, _password.value)
+    }
+
+    fun logoutUser() = dataService.logoutUser()
 
     fun getUserUid() = viewModelScope.launch {
         when(val userUid = dataService.getUserUid()){
@@ -64,5 +88,37 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
                 throw IllegalStateException(userUid.message)
             }
         }
+    }
+
+    fun passwordReset(userEmail: String) = viewModelScope.launch {
+        when(val result = dataService.sendResetPasswordEmail(userEmail)) {
+            is FunctionResult.Success -> {
+                _otpCode.value = result.data
+                _otpCodeTimer.value = 50000
+                startOtpTimer()
+            }
+            is FunctionResult.Error -> {
+                _errorMessage.emit(result.message)
+                return@launch
+            }
+        }
+    }
+
+    private fun startOtpTimer() {
+        timerJob?.cancel()
+
+        timerJob = viewModelScope.launch {
+            while (_otpCodeTimer.value > 0) {
+                delay(1000L)
+                _otpCodeTimer.value -= 1000L
+            }
+            _otpCode.value = null
+        }
+    }
+
+    private fun stopTimer() {
+        timerJob?.cancel()
+        _otpCode.value = null
+        _otpCodeTimer.value = 0L
     }
 }

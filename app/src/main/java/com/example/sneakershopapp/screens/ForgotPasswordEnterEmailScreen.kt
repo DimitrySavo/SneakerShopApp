@@ -22,13 +22,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.DefaultOutlinedTextField
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
+import com.example.sneakershopapp.utils.ValidationUtils
+import com.example.sneakershopapp.viewmodel.UserViewModel
 
 @Composable
-fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier) { //, navController: NavController, userViewModel: UserViewModel  после окончания верстки нужно вставить это назад в аргументы
+fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier, navController: NavController, userViewModel: UserViewModel) {
     val scrollState = rememberScrollState()
 
     var email by remember{
@@ -56,7 +59,7 @@ fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier) { //, navContr
                         start.linkTo(parent.start)
                     }
             ) {
-                // Через navControoler делает popBackStack и возвращает на экран login
+                navController.popBackStack()
             }
 
             Text(
@@ -95,12 +98,16 @@ fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier) { //, navContr
                     .padding(bottom = LocalPaddingValues.current.vertical),
                 email,
                 "xyz@gmail.com",
-                "",
-                { true }
-            ) { } // error сделать просто mutable state и менять его в зависимости от результата при нажатии кнопки
+                "Email не соответствует стандарту",
+                ValidationUtils::isEmailValid
+            ) {
+                email = it
+            }
 
             Button(
-                onClick = {},
+                onClick = {
+                    userViewModel.passwordReset(email)
+                },
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
                     .constrainAs(getCode){
@@ -138,6 +145,6 @@ fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier) { //, navContr
 @Composable
 private fun HelloPagerPreview() {
     SneakerShopAppTheme {
-        ForgotPasswordEnterEmailScreen()
+        //ForgotPasswordEnterEmailScreen()
     }
 }

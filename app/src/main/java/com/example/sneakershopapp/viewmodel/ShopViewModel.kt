@@ -15,7 +15,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class ShopViewModel(private val dataService: DataService = SneakerApplication.getInstance().dataService) : ViewModel(){
+class ShopViewModel() : ViewModel(){
+    private val dataService: DataService = SneakerApplication.getInstance().dataService
+
     private val _shoes = MutableStateFlow(emptyList<Shoe>())
     val shoes = _shoes.asStateFlow()
 

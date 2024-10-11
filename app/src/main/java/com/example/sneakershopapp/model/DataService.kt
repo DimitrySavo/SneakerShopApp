@@ -1,6 +1,8 @@
 package com.example.sneakershopapp.model
 
 import android.util.Log
+import com.example.sneakershopapp.utils.ValidationUtils
+import com.example.sneakershopapp.utils.testing.EmailMock
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.FieldValue
@@ -9,7 +11,7 @@ import com.google.firebase.firestore.getField
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 
-class  DataService{
+class DataService{
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
@@ -51,16 +53,46 @@ class  DataService{
 
     suspend fun unmarkShoeAsFavorite(shoeId: String): FunctionResult<Unit> {
         val currentUserUid = auth.currentUser?.uid ?: return FunctionResult.Error("User is null")
-        val userRef = db.collection("users").document(currentUserUid)
+        val userRef = db.collection("users").document(currentUserUid) // попробовать заменить шаблонный код на inline функции
         userRef.update("favorites", FieldValue.arrayRemove(shoeId)).await()
         return FunctionResult.Success(Unit)
     }
 
-    suspend fun getFavorites(): FunctionResult<List<String>> {
+    private suspend fun getUserDoc(): FunctionResult<User> {
         val currentUserUid = auth.currentUser?.uid ?: return FunctionResult.Error("User is null")
         val userSnapshot = db.collection("users").document(currentUserUid).get().await()
-        val user = userSnapshot.toObject<User>()
-        return FunctionResult.Success(user?.favorites ?: emptyList())
+        val user = userSnapshot.toObject<User>() ?: return FunctionResult.Error("User document is null")
+        return FunctionResult.Success(user)
+    }
+
+    suspend fun getFavorites(): FunctionResult<List<String>> {
+        return when(val user = getUserDoc()){
+            is FunctionResult.Success -> {
+                FunctionResult.Success(user.data.favorites)
+            }
+            is FunctionResult.Error -> {
+                FunctionResult.Error("Something went wrong in getting user from firebase")
+            }
+        }
+    }
+
+    suspend fun getUserName(): FunctionResult<String> {
+        return when(val user = getUserDoc()) {
+            is FunctionResult.Success -> FunctionResult.Success(user.data.name)
+            is FunctionResult.Error -> FunctionResult.Error("Cant get name from app data")
+        }
+    }
+
+    suspend fun getUnauthorizedName(userEmail: String): FunctionResult<String> {
+        val userSnapshot = db.collection("users")
+            .whereEqualTo("Email", userEmail)
+            .get()
+            .await()
+        return if (!userSnapshot.isEmpty){
+            FunctionResult.Success(userSnapshot.documents[0].get("Name").toString())
+        } else {
+            FunctionResult.Error("Failed to get user with such email")
+        }
     }
 
     suspend fun addToCart(shoeId: String, shoe: CartShoe): FunctionResult<Unit> {
@@ -127,6 +159,28 @@ class  DataService{
             }
         } catch (e: Exception) {
             FunctionResult.Error(e.toString())
+        }
+    }
+
+    suspend fun sendResetPasswordEmail(userEmail: String): FunctionResult<String> {
+        val otpCode = (100000..999999).random().toString()
+        val name = when(val result = getUserName()) {
+            is  FunctionResult.Success -> {
+                result.data
+            }
+            is FunctionResult.Error -> {
+                when(val firebaseResult = getUnauthorizedName(userEmail)) {
+                    is FunctionResult.Success -> firebaseResult.data
+                    is FunctionResult.Error -> return FunctionResult.Error("There is no user with such email")
+                }
+            }
+        }
+        return  try {
+            EmailMock.SendEmail(otpCode, name, userEmail)
+            FunctionResult.Success("Email sent successfully")
+        } catch (ex: Exception){
+            Log.e("Email sending: ", "$ex")
+            FunctionResult.Error("Error: ${ex.message}")
         }
     }
 }

@@ -18,7 +18,7 @@ fun TextFieldTopLabel(
     fieldValue: String,
     placeholder: String = "",
     errorMessage: String = "",
-    errorValidator: () -> Boolean,
+    errorValidator: (String) -> Boolean,
     onValueChange: (String) -> Unit
 ) {
     Column(

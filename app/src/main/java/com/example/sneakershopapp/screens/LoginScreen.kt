@@ -48,18 +48,14 @@ import com.example.sneakershopapp.composables.PasswordTextField
 import com.example.sneakershopapp.composables.TextFieldTopLabel
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
+import com.example.sneakershopapp.utils.ValidationUtils
 import com.example.sneakershopapp.viewmodel.UserViewModel
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavController, userViewModel: UserViewModel  после окончания верстки нужно вставить это назад в аргументы
+fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, userViewModel: UserViewModel) {
     val scrollState = rememberScrollState()
-    //val user by userViewModel.user.collectAsState()
-    var user by remember {
-        mutableStateOf("")
-    }
-    var password by remember {
-        mutableStateOf("")
-    }
+    val user by userViewModel.user.collectAsState()
+    val password by userViewModel.password.collectAsState()
     
     Column(
         modifier = Modifier
@@ -80,9 +76,7 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                     }
-            ) {
-                // Кнопочка тут просто для красоты, хз зач она на макете
-            }
+            ) {}
             Text(
                 text = "Привет!",
                 color = MaterialTheme.colorScheme.onBackground,
@@ -116,11 +110,13 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                     }
                 ,
                 labelText = "E-mail",
-                fieldValue = "",
+                fieldValue = user.email,
                 placeholder = "xyz@gmail.com",
-                errorMessage = "",
-                errorValidator = { true }
-            ) { }
+                errorMessage = "Email не соответсвует формату",
+                errorValidator = ValidationUtils::isEmailValid
+            ) {
+                userViewModel.updateUser(email = it)
+            }
 
             TextFieldTopLabel(
                 modifier = Modifier
@@ -130,16 +126,17 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                     },
                 labelText = "Пароль",
                 placeholder = "*******",
-                fieldValue = "",
-                errorMessage = "",
-                errorValidator = { true }
+                fieldValue = password,
+                errorMessage = "Ошибка пароля",
+                errorValidator = ValidationUtils::isPasswordValid //пока что так, но по хорошему заменить все это
             ) {
-
+                userViewModel.updatePassword(it)
             }
 
-
             TextButton(
-                onClick = {},
+                onClick = {
+                    // navController.navigate("forgotPassword")
+                },
                 modifier = Modifier
                     .constrainAs(forgotPassword) {
                         top.linkTo(passwordBlock.bottom)
@@ -154,7 +151,9 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
                 )
             }
             Button(
-                onClick = {},
+                onClick = {
+                    userViewModel.loginUser()
+                },
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
                     .constrainAs(logInButton){
@@ -191,7 +190,9 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
             )
 
             TextButton(
-                onClick = {},
+                onClick = {
+                    //navController.navigate("register")
+                },
                 contentPadding = PaddingValues(0.dp),
 
             ) {
@@ -219,6 +220,5 @@ fun LoginScreen(modifier: Modifier = Modifier) { //, navController: NavControlle
 @Composable
 private fun HelloPagerPreview() {
     SneakerShopAppTheme {
-        LoginScreen()
     }
 }
