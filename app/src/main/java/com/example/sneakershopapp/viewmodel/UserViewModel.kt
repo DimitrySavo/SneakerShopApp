@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sneakershopapp.SneakerApplication
 import com.example.sneakershopapp.model.DataService
 import com.example.sneakershopapp.model.FunctionResult
+import com.example.sneakershopapp.model.LoginSate
 import com.example.sneakershopapp.model.User
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -36,6 +37,9 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
 
+    private val _loginState = MutableStateFlow<LoginSate>(LoginSate.Loading)
+    val loginState = _loginState.asStateFlow()
+
     private var timerJob: Job? = null
 
     init {
@@ -62,7 +66,10 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
     }
 
     fun loginUser() = viewModelScope.launch {
-        dataService.loginUser(_user.value.email, _password.value)
+        when(val result = dataService.loginUser(_user.value.email, _password.value)){
+            is FunctionResult.Success -> _loginState.value = LoginSate.Success
+            is FunctionResult.Error -> _loginState.value = LoginSate.Error(result.message)
+        }
     }
 
     fun logoutUser() = dataService.logoutUser()

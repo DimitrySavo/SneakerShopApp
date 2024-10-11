@@ -1,7 +1,12 @@
 package com.example.sneakershopapp.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.VerticalAlignmentLine
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,17 +53,34 @@ import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.DefaultOutlinedTextField
 import com.example.sneakershopapp.composables.PasswordTextField
 import com.example.sneakershopapp.composables.TextFieldTopLabel
+import com.example.sneakershopapp.model.LoginSate
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 import com.example.sneakershopapp.utils.ValidationUtils
 import com.example.sneakershopapp.viewmodel.UserViewModel
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, userViewModel: UserViewModel) {
+fun LoginScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    userViewModel: UserViewModel
+) {
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
     val user by userViewModel.user.collectAsState()
     val password by userViewModel.password.collectAsState()
-    
+    val loginState by userViewModel.loginState.collectAsState()
+
+    LaunchedEffect(loginState) {
+        when(loginState){
+            is LoginSate.Success -> navController.navigate("store"){
+                popUpTo("login") { inclusive = true }
+            }
+            is LoginSate.Error -> Toast.makeText( context, "Some error happens", Toast.LENGTH_SHORT).show()
+            is LoginSate.Loading -> {}
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,7 +90,10 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, use
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = LocalPaddingValues.current.vertical, horizontal = LocalPaddingValues.current.horizontal)
+                .padding(
+                    vertical = LocalPaddingValues.current.vertical,
+                    horizontal = LocalPaddingValues.current.horizontal
+                )
         ) {
             val (backButton, hello, instruction, emailBlock, passwordBlock, forgotPassword, logInButton) = createRefs()
             BackIconButton(
@@ -104,11 +131,10 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, use
 
             TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(emailBlock){
+                    .constrainAs(emailBlock) {
                         top.linkTo(instruction.bottom)
                         start.linkTo(parent.start)
-                    }
-                ,
+                    },
                 labelText = "E-mail",
                 fieldValue = user.email,
                 placeholder = "xyz@gmail.com",
@@ -120,7 +146,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, use
 
             TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(passwordBlock){
+                    .constrainAs(passwordBlock) {
                         top.linkTo(emailBlock.bottom)
                         start.linkTo(parent.start)
                     },
@@ -133,9 +159,9 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, use
                 userViewModel.updatePassword(it)
             }
 
-            TextButton(
+            TextButton( //Удалить анимацию нажатия а то кринж какой-то
                 onClick = {
-                    // navController.navigate("forgotPassword")
+                    navController.navigate("forgotPassword")
                 },
                 modifier = Modifier
                     .constrainAs(forgotPassword) {
@@ -143,6 +169,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, use
                         end.linkTo(parent.end)
                     }
                     .padding(bottom = LocalPaddingValues.current.vertical)
+                    .indication(interactionSource = remember { MutableInteractionSource() }, null)
             ) {
                 Text(
                     text = "Восстановить",
@@ -156,13 +183,12 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, use
                 },
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
-                    .constrainAs(logInButton){
+                    .constrainAs(logInButton) {
                         top.linkTo(forgotPassword.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
                     .fillMaxWidth()
-
             ) {
                 Text(
                     text = "Войти",
@@ -177,9 +203,9 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, use
         Spacer(modifier = Modifier.weight(1f))
 
         Row(
-          modifier = Modifier
-              .fillMaxWidth()
-              .padding(LocalPaddingValues.current.underField),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(LocalPaddingValues.current.underField),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -190,12 +216,14 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, use
             )
 
             TextButton(
+                //Удалить анимацию нажатия а то кринж какой-то
                 onClick = {
-                    //navController.navigate("register")
+                    navController.navigate("register")
                 },
                 contentPadding = PaddingValues(0.dp),
-
-            ) {
+                modifier = Modifier
+                    .indication(interactionSource = remember { MutableInteractionSource() }, null)
+                ) {
                 Text(
                     text = " Создать пользователя",
                     style = MaterialTheme.typography.bodyMedium,

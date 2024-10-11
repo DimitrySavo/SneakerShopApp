@@ -1,6 +1,5 @@
 package com.example.sneakershopapp.composables
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio

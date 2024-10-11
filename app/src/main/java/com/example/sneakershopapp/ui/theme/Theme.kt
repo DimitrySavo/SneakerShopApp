@@ -97,7 +97,7 @@ fun customOutlinedColors(): TextFieldColors {
         focusedPlaceholderColor = MaterialTheme.colorScheme.onBackground,
         unfocusedTrailingIconColor = MaterialTheme.colorScheme.onSecondary,
         errorTrailingIconColor = MaterialTheme.colorScheme.onSecondary,
-        focusedTrailingIconColor = MaterialTheme.colorScheme.onSecondary
+        focusedTrailingIconColor = MaterialTheme.colorScheme.onSecondary,
     )
 }
 

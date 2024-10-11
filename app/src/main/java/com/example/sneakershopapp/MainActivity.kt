@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.Text
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -15,6 +16,7 @@ import com.example.sneakershopapp.viewmodel.ShopViewModel
 import com.example.sneakershopapp.viewmodel.UserViewModel
 import com.example.sneakershopapp.screens.HelloScreensPager
 import com.example.sneakershopapp.screens.LoginScreen
+import com.example.sneakershopapp.screens.RegisterScreen
 import com.example.sneakershopapp.ui.theme.ProvidePadding
 
 class MainActivity : ComponentActivity() {
@@ -40,14 +42,18 @@ class MainActivity : ComponentActivity() {
                                 LoginScreen(navController = navController, userViewModel = userViewModel)
                             }
                             composable("register"){
-
+                                RegisterScreen(navController = navController, userViewModel = userViewModel)
                             }
                             composable("forgotPassword"){
-
+                                Text(
+                                    text = "placeholder for forgotPassword Screen"
+                                )
                             }
                         }
                         composable("store"){
-
+                            Text(
+                                text = "Store placeholder for now"
+                            )
                         }
                         composable("favorites"){
 

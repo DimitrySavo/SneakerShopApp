@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import androidx.test.services.storage.file.PropertyFile.Column
 import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.DefaultOutlinedTextField
@@ -43,9 +44,10 @@ import com.example.sneakershopapp.composables.TextFieldTopLabel
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.ProvidePadding
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
+import com.example.sneakershopapp.viewmodel.UserViewModel
 
 @Composable
-fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavController, userViewModel: UserViewModel  после окончания верстки нужно вставить это назад в аргументы
+fun RegisterScreen(modifier: Modifier = Modifier, navController: NavController, userViewModel: UserViewModel) {
     val scrollState = rememberScrollState()
 
     var name by remember {
@@ -258,7 +260,6 @@ fun RegisterScreen(modifier: Modifier = Modifier) {//, navController: NavControl
 private fun HelloPagerPreview() {
     ProvidePadding {
         SneakerShopAppTheme {
-            RegisterScreen()
         }
     }
 }

@@ -140,7 +140,6 @@ class DataService{
                 }
                 else -> "Неизвестная ошибка: ${e.message}"
             }
-
             Log.e("DataService", "loginUser: $errorMessage")
             return FunctionResult.Error(errorMessage)
         }

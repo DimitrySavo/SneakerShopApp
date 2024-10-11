@@ -27,13 +27,13 @@ fun DefaultOutlinedTextField(
             value = value,
             onValueChange = { onValueChange(it) },
             colors = customOutlinedColors(),
-            textStyle = MaterialTheme.typography.bodyMedium,
+            textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground),
             shape = RoundedCornerShape(20),
             modifier = Modifier
                 .fillMaxWidth(),
             placeholder = { Text(text = placeholder, style = MaterialTheme.typography.bodyMedium) }
         )
-        if(errorValidator(value)){
+        if (!errorValidator(value)) {
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colorScheme.error,
