@@ -17,7 +17,6 @@ fun DefaultOutlinedTextField(
     value: String,
     placeholder: String = "",
     errorMessage: String = "",
-    errorValidator: (String) -> Boolean,
     onValueChange: (String) -> Unit
 ) {
     Column(
@@ -33,14 +32,12 @@ fun DefaultOutlinedTextField(
                 .fillMaxWidth(),
             placeholder = { Text(text = placeholder, style = MaterialTheme.typography.bodyMedium) }
         )
-        if (!errorValidator(value)) {
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier
-                    .align(alignment = Alignment.End)
-            )
-        }
+        Text(
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier
+                .align(alignment = Alignment.End)
+        )
     }
 }

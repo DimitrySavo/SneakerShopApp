@@ -99,7 +99,6 @@ fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier, navController:
                 email,
                 "xyz@gmail.com",
                 "Email не соответствует стандарту",
-                ValidationUtils::isEmailValid
             ) {
                 email = it
             }

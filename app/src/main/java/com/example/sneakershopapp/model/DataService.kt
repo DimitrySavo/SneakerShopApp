@@ -5,6 +5,7 @@ import com.example.sneakershopapp.utils.ValidationUtils
 import com.example.sneakershopapp.utils.testing.EmailMock
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.getField
@@ -117,6 +118,9 @@ class DataService{
 
             Log.i("DataService", "registerUser: $currentUserUid")
             return FunctionResult.Success(currentUserUid)
+        } catch (e: FirebaseAuthUserCollisionException){
+            Log.e("DataService", "Email is already in use")
+            return FunctionResult.Error("Email is already in use")
         } catch (e: Exception) {
             Log.e("DataService", "registerUser: ${e.message}")
             return FunctionResult.Error(e.message ?: "Unknown error")

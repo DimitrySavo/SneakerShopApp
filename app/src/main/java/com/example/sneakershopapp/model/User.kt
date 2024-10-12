@@ -17,9 +17,3 @@ data class User(
     )
 }
 
-fun User.checkUser(password: String): Boolean {
-    return ValidationUtils.isEmailValid(this.email) &&
-            ValidationUtils.isNameValid(this.name) &&
-            ValidationUtils.isSurnameValid(this.surname) &&
-            ValidationUtils.isPasswordValid(password)
-}

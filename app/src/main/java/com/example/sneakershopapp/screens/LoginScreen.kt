@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -41,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalContext
@@ -49,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
+import com.example.sneakershopapp.Paths
 import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.DefaultOutlinedTextField
 import com.example.sneakershopapp.composables.PasswordTextField
@@ -72,11 +75,18 @@ fun LoginScreen(
     val loginState by userViewModel.loginState.collectAsState()
 
     LaunchedEffect(loginState) {
-        when(loginState){
-            is LoginSate.Success -> navController.navigate("store"){
-                popUpTo("login") { inclusive = true }
+        when(loginState) {
+            is LoginSate.Success -> navController.navigate(Paths.STORE) {
+                popUpTo(Paths.LOGIN) { inclusive = true }
+            }.also {
+                userViewModel.resetLoginState()
             }
-            is LoginSate.Error -> Toast.makeText( context, "Some error happens", Toast.LENGTH_SHORT).show()
+
+            is LoginSate.Error -> Toast.makeText(context, (loginState as LoginSate.Error).message, Toast.LENGTH_SHORT)
+                .show().also {
+                    userViewModel.resetLoginState()
+                }
+
             is LoginSate.Loading -> {}
         }
     }
@@ -154,29 +164,28 @@ fun LoginScreen(
                 placeholder = "*******",
                 fieldValue = password,
                 errorMessage = "Ошибка пароля",
-                errorValidator = ValidationUtils::isPasswordValid //пока что так, но по хорошему заменить все это
+                errorValidator = ValidationUtils::isPasswordValid //пока что так, но по хорошему заменить все это(эти валидации работаю постоянно, что может плохо сказаться на overall восприятии интерфейса)
             ) {
                 userViewModel.updatePassword(it)
             }
 
-            TextButton( //Удалить анимацию нажатия а то кринж какой-то
-                onClick = {
-                    navController.navigate("forgotPassword")
-                },
+            Text(
+                text = "Восстановить",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondary,
                 modifier = Modifier
                     .constrainAs(forgotPassword) {
                         top.linkTo(passwordBlock.bottom)
                         end.linkTo(parent.end)
                     }
                     .padding(bottom = LocalPaddingValues.current.vertical)
-                    .indication(interactionSource = remember { MutableInteractionSource() }, null)
-            ) {
-                Text(
-                    text = "Восстановить",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSecondary
-                )
-            }
+                    .clickable(interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = {
+                            navController.navigate(Paths.FORGOT_PASSWORD)
+                        }
+                    )
+            )
             Button(
                 onClick = {
                     userViewModel.loginUser()
@@ -215,21 +224,18 @@ fun LoginScreen(
                 color = MaterialTheme.colorScheme.onSecondary
             )
 
-            TextButton(
-                //Удалить анимацию нажатия а то кринж какой-то
-                onClick = {
-                    navController.navigate("register")
-                },
-                contentPadding = PaddingValues(0.dp),
-                modifier = Modifier
-                    .indication(interactionSource = remember { MutableInteractionSource() }, null)
-                ) {
-                Text(
-                    text = " Создать пользователя",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground
+            Text(
+                text = " Создать пользователя",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {
+                        navController.navigate(Paths.REGISTER)
+                    }
                 )
-            }
+            )
         }
     }
 }

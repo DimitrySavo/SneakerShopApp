@@ -40,7 +40,6 @@ fun TextFieldTopLabel(
             value = fieldValue,
             placeholder = placeholder,
             errorMessage = errorMessage,
-            errorValidator = errorValidator,
             onValueChange = onValueChange
         )
     }

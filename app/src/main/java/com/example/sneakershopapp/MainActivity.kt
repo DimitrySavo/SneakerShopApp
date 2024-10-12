@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.Path
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -30,51 +31,58 @@ class MainActivity : ComponentActivity() {
                     val userViewModel = viewModel<UserViewModel>()
                     val shopViewModel = viewModel<ShopViewModel>()
                     userViewModel.logoutUser()
-                    val startDestination = if(userViewModel.isUserRegistered()) "store" else "hello"
+                    val startDestination =
+                        if (userViewModel.isUserRegistered()) "store" else "hello"
 
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = startDestination){
-                        composable("hello"){
+                    NavHost(navController = navController, startDestination = startDestination) {
+                        composable(Paths.HELLO) {
                             HelloScreensPager(navController = navController)
                         }
-                        navigation(startDestination = "login", route = "auth"){
-                            composable("login"){
-                                LoginScreen(navController = navController, userViewModel = userViewModel)
+                        navigation(startDestination = Paths.LOGIN, route = "auth") {
+                            composable(Paths.LOGIN) {
+                                LoginScreen(
+                                    navController = navController,
+                                    userViewModel = userViewModel
+                                )
                             }
-                            composable("register"){
-                                RegisterScreen(navController = navController, userViewModel = userViewModel)
+                            composable(Paths.REGISTER) {
+                                RegisterScreen(
+                                    navController = navController,
+                                    userViewModel = userViewModel
+                                )
                             }
-                            composable("forgotPassword"){
+                            composable(Paths.FORGOT_PASSWORD) {
                                 Text(
                                     text = "placeholder for forgotPassword Screen"
                                 )
                             }
                         }
-                        composable("store"){
+                        composable(Paths.STORE) {
                             Text(
                                 text = "Store placeholder for now"
                             )
                         }
-                        composable("favorites"){
+                        composable(Paths.FAVORITES) {
 
                         }
-                        composable("cart"){
+                        composable(Paths.CART) {
 
                         }
-                        composable("orderCheckout"){
+                        composable(Paths.CHECKOUT) {
 
                         }
-                        composable("notifications"){
+                        composable(Paths.NOTIFICATIONS) {
 
                         }
-                        composable("orderDetails"){
+                        composable(Paths.DETAILS) {
 
                         }
-                        navigation(startDestination = "userInfo", route = "profile"){
-                            composable("userInfo"){
+                        navigation(startDestination = Paths.INFO, route = "profile") {
+                            composable(Paths.INFO) {
 
                             }
-                            composable("settings"){
+                            composable(Paths.SETTINGS) {
 
                             }
                         }
@@ -83,4 +91,19 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+object Paths {
+    const val HELLO = "hello"
+    const val LOGIN = "login"
+    const val REGISTER = "register"
+    const val FORGOT_PASSWORD = "forgotPassword"
+    const val STORE = "store"
+    const val FAVORITES = "favorites"
+    const val CART = "cart"
+    const val CHECKOUT = "orderCheckout"
+    const val NOTIFICATIONS = "notifications"
+    const val DETAILS = "orderDetails"
+    const val INFO = "userInfo"
+    const val SETTINGS = "settings"
 }

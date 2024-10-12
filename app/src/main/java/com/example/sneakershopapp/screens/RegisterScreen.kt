@@ -1,5 +1,6 @@
 package com.example.sneakershopapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,31 +36,31 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.test.services.storage.file.PropertyFile.Column
 import com.example.sneakershopapp.composables.BackIconButton
-import com.example.sneakershopapp.composables.DefaultOutlinedTextField
-import com.example.sneakershopapp.composables.PasswordTextField
 import com.example.sneakershopapp.composables.TextFieldTopLabel
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.ProvidePadding
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
+import com.example.sneakershopapp.viewmodel.RegisterViewModel
 import com.example.sneakershopapp.viewmodel.UserViewModel
 
 @Composable
-fun RegisterScreen(modifier: Modifier = Modifier, navController: NavController, userViewModel: UserViewModel) {
+fun RegisterScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    userViewModel: UserViewModel,
+    registerViewModel: RegisterViewModel = viewModel()
+) {
     val scrollState = rememberScrollState()
+    val user by userViewModel.user.collectAsState()
+    val password by userViewModel.password.collectAsState()
 
-    var name by remember {
-        mutableStateOf("")
-    }
-    var email by remember {
-        mutableStateOf("")
-    }
-
-    var password by remember {
-        mutableStateOf("")
-    }
+    val nameError by registerViewModel.nameError.collectAsState()
+    val surnameError by registerViewModel.surnameError.collectAsState()
+    val emailError by registerViewModel.emailError.collectAsState()
+    val passwordError by registerViewModel.passwordError.collectAsState()
 
     Column(
         modifier = Modifier
@@ -70,18 +71,21 @@ fun RegisterScreen(modifier: Modifier = Modifier, navController: NavController, 
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = LocalPaddingValues.current.vertical, horizontal = LocalPaddingValues.current.horizontal)
+                .padding(
+                    vertical = LocalPaddingValues.current.vertical,
+                    horizontal = LocalPaddingValues.current.horizontal
+                )
         ) {
             val (backButton, register, instruction, nameBlock, surnameBlock, emailBlock, passwordBlock, personalDataAgree, registerButton) = createRefs()
             BackIconButton(
-                isEnabled = false,
+                isEnabled = true,
                 modifier = Modifier
                     .constrainAs(backButton) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                     }
             ) {
-                // Через navControoler делает popBackStack и возвращает на экран login
+                navController.popBackStack()
             }
 
             Text(
@@ -111,57 +115,65 @@ fun RegisterScreen(modifier: Modifier = Modifier, navController: NavController, 
 
             TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(nameBlock){
+                    .constrainAs(nameBlock) {
                         top.linkTo(instruction.bottom)
                         start.linkTo(parent.start)
                     },
                 labelText = "Ваше имя",
-                fieldValue = "",
+                fieldValue = user.name,
                 placeholder = "xxxxxx",
-                errorMessage = "",
+                errorMessage = nameError,
                 errorValidator = { true }
-            ) { }
+            ) {
+                userViewModel.updateUser(name = it)
+            }
 
             TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(surnameBlock){
+                    .constrainAs(surnameBlock) {
                         top.linkTo(nameBlock.bottom)
                         start.linkTo(parent.start)
                     },
                 labelText = "Ваша фамилия",
-                fieldValue = "",
+                fieldValue = user.surname,
                 placeholder = "xxxxxxxx",
-                errorMessage = "",
+                errorMessage = surnameError,
                 errorValidator = { true }
-            ) { }
+            ) {
+                userViewModel.updateUser(surname = it)
+            }
 
             TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(emailBlock){
+                    .constrainAs(emailBlock) {
                         top.linkTo(surnameBlock.bottom)
                         start.linkTo(parent.start)
                     },
                 labelText = "E-mail",
                 placeholder = "xyz@gmail.com",
-                fieldValue = "",
-                errorMessage = "",
+                fieldValue = user.email,
+                errorMessage = emailError,
                 errorValidator = { true }
-            ) { }
+            ) {
+                userViewModel.updateUser(email = it)
+            }
 
             TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(passwordBlock){
+                    .constrainAs(passwordBlock) {
                         top.linkTo(emailBlock.bottom)
                         start.linkTo(parent.start)
                     },
                 labelText = "Пароль",
-                fieldValue = "",
+                fieldValue = password,
                 placeholder = "*******",
-                errorMessage = "",
+                errorMessage = passwordError,
                 errorValidator = { true }
-            ) { }
+            ) {
+                userViewModel.updatePassword(it)
+            }
 
-            Row(
+            Row( // тут должен быть интент на страницу в браузере с условиями использования или типа того
                 modifier = Modifier
                     .constrainAs(personalDataAgree) {
                         start.linkTo(parent.start)
@@ -173,9 +185,7 @@ fun RegisterScreen(modifier: Modifier = Modifier, navController: NavController, 
                 Box(
                     modifier = Modifier
                         .padding(5.dp)
-                        .clip(
-                        RoundedCornerShape(20)
-                    )
+                        .clip(RoundedCornerShape(20))
                         .background(MaterialTheme.colorScheme.onSurface)
                 ) {
                     Icon(
@@ -195,10 +205,16 @@ fun RegisterScreen(modifier: Modifier = Modifier, navController: NavController, 
             }
 
             Button(
-                onClick = {},
+                onClick = {
+                    Log.i("RegisterButton", "Get into method")
+                    if (registerViewModel.validations(user, password)) {
+                        Log.i("RegisterButton", "Pass validations")
+                        userViewModel.registerUser(registerViewModel)
+                    }
+                },
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
-                    .constrainAs(registerButton){
+                    .constrainAs(registerButton) {
                         top.linkTo(personalDataAgree.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
@@ -232,9 +248,11 @@ fun RegisterScreen(modifier: Modifier = Modifier, navController: NavController, 
             )
 
             TextButton(
-                onClick = {},
+                onClick = {
+                    //
+                },
                 contentPadding = PaddingValues(0.dp)
-                ) {
+            ) {
                 Text(
                     text = " Войти",
                     style = MaterialTheme.typography.bodyMedium,

@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.sneakershopapp.Paths
 import com.example.sneakershopapp.composables.FirstHelloScreen
 import com.example.sneakershopapp.composables.SecondHelloScreen
 import com.example.sneakershopapp.composables.ThirdHelloScreen
@@ -82,8 +83,8 @@ fun HelloScreensPager(modifier: Modifier = Modifier, initialPage: Int = 0, navCo
                         scope.launch {
                             val nextPage = pagerState.currentPage + 1
                             if (nextPage > pagerState.pageCount - 1) {
-                                navController.navigate("login"){
-                                    popUpTo("hello") { inclusive = true}
+                                navController.navigate(Paths.LOGIN){
+                                    popUpTo(Paths.HELLO) { inclusive = true}
                                 }
                             } else{
                                 pagerState.animateScrollToPage(nextPage)

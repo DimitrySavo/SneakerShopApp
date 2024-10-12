@@ -1,6 +1,7 @@
 package com.example.sneakershopapp.viewmodel
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -18,7 +19,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class UserViewModel(private val dataService: DataService = SneakerApplication.getInstance().dataService) : ViewModel() {
+class UserViewModel(private val dataService: DataService = SneakerApplication.getInstance().dataService) :
+    ViewModel() {
     private val _user = MutableStateFlow(User("", "", ""))
     val user = _user.asStateFlow()
 
@@ -47,7 +49,13 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
         getUserUid()
     }
 
-    fun updateUser(email: String? = null, name: String? = null, surname: String? = null, phoneNumber: String? = null, deliveryAddress: String? = null) {
+    fun updateUser(
+        email: String? = null,
+        name: String? = null,
+        surname: String? = null,
+        phoneNumber: String? = null,
+        deliveryAddress: String? = null
+    ) {
         _user.value = _user.value.copy(
             email = email ?: _user.value.email,
             name = name ?: _user.value.name,
@@ -66,7 +74,7 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
     }
 
     fun loginUser() = viewModelScope.launch {
-        when(val result = dataService.loginUser(_user.value.email, _password.value)){
+        when (val result = dataService.loginUser(_user.value.email, _password.value)) {
             is FunctionResult.Success -> _loginState.value = LoginSate.Success
             is FunctionResult.Error -> _loginState.value = LoginSate.Error(result.message)
         }
@@ -74,23 +82,44 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
 
     fun logoutUser() = dataService.logoutUser()
 
+    fun registerUser(registerViewModel: RegisterViewModel) = viewModelScope.launch {
+        when (val result = dataService.registerUser(_user.value, _password.value)) {
+            is FunctionResult.Success -> Log.i(
+                "Register",
+                "User ${result.data} successfully registered"
+            )
+
+            is FunctionResult.Error -> {
+                when (result.message) {
+                    "Email is already in use" -> {
+                        registerViewModel.updateEmailMessage("Пользователь с таким email уже существует")
+                        Log.e("Register", "Пользователь с таким email уже существует")
+                    }
+                    else -> Log.e("Register", result.message)
+                }
+            }
+        }
+    }
+
     fun getUserUid() = viewModelScope.launch {
-        when(val userUid = dataService.getUserUid()){
+        when (val userUid = dataService.getUserUid()) {
             is FunctionResult.Success -> {
                 Log.i("User uid", userUid.data ?: "User is null")
                 _userUid.value = userUid.data
             }
+
             is FunctionResult.Error -> {
                 Log.e("MyViewModel", userUid.message)
             }
         }
     }
 
-    fun isUserRegistered() : Boolean {
-        return when(val userUid = dataService.getUserUid()){
+    fun isUserRegistered(): Boolean {
+        return when (val userUid = dataService.getUserUid()) {
             is FunctionResult.Success -> {
                 userUid.data != null
             }
+
             is FunctionResult.Error -> {
                 throw IllegalStateException(userUid.message)
             }
@@ -98,12 +127,13 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
     }
 
     fun passwordReset(userEmail: String) = viewModelScope.launch {
-        when(val result = dataService.sendResetPasswordEmail(userEmail)) {
+        when (val result = dataService.sendResetPasswordEmail(userEmail)) {
             is FunctionResult.Success -> {
                 _otpCode.value = result.data
                 _otpCodeTimer.value = 50000
                 startOtpTimer()
             }
+
             is FunctionResult.Error -> {
                 _errorMessage.emit(result.message)
                 return@launch
@@ -127,5 +157,9 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
         timerJob?.cancel()
         _otpCode.value = null
         _otpCodeTimer.value = 0L
+    }
+
+    fun resetLoginState() {
+        _loginState.value = LoginSate.Loading
     }
 }
