@@ -19,4 +19,36 @@ object ValidationUtils {
     fun isSurnameValid(surname: String): Boolean {
         return surname.isNotBlank()
     }
+
+    fun validateName(name: String): String {
+        return when {
+            name.isBlank() -> "Поле не может быть пустым"
+            name.contains(Regex("[0-9]")) -> "Поле не может содержать цифр"
+            else -> ""
+        }
+    }
+
+    fun validateSurname(surname: String): String {
+        return when {
+            surname.isBlank() -> "Поле не может быть пустым"
+            surname.contains(Regex("[0-9]")) -> "Поле не может содержать цифр"
+            else -> ""
+        }
+    }
+
+    fun validateEmail(email: String): String {
+        return when {
+            email.isBlank() -> "Поле не может быть пустым"
+            !isEmailValid(email) -> "Неверный формат"
+            else -> ""
+        }
+    }
+
+    fun validatePassword(password: String): String {
+        return when {
+            password.isBlank() -> "Поле не может быть пустым"
+            !isPasswordValid(password) -> "Пароль должен включать в себя:\n8 символов\n1 заглавный символ\n1 цифру"
+            else -> ""
+        }
+    }
 }

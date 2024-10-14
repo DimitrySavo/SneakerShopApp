@@ -39,9 +39,6 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
 
-    private val _loginState = MutableStateFlow<LoginSate>(LoginSate.Loading)
-    val loginState = _loginState.asStateFlow()
-
     private var timerJob: Job? = null
 
     init {
@@ -69,14 +66,13 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
         _password.value = password
     }
 
-    fun addUser() = viewModelScope.launch {
-        dataService.registerUser(_user.value, _password.value)
-    }
-
-    fun loginUser() = viewModelScope.launch {
+    fun loginUser(loginViewModel : LoginViewModel) = viewModelScope.launch {
         when (val result = dataService.loginUser(_user.value.email, _password.value)) {
-            is FunctionResult.Success -> _loginState.value = LoginSate.Success
-            is FunctionResult.Error -> _loginState.value = LoginSate.Error(result.message)
+            is FunctionResult.Success -> loginViewModel.changeLoginState(true)
+            is FunctionResult.Error -> {
+                loginViewModel.changeEmailMessage(result.message.contains("Ошибка аутентификации"))
+                loginViewModel.changeLoginState(false)
+            }
         }
     }
 
@@ -157,9 +153,5 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
         timerJob?.cancel()
         _otpCode.value = null
         _otpCodeTimer.value = 0L
-    }
-
-    fun resetLoginState() {
-        _loginState.value = LoginSate.Loading
     }
 }

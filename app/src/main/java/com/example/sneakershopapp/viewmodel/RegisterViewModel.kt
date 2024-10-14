@@ -24,38 +24,22 @@ class RegisterViewModel() : ViewModel() {
     val registerState = _registerState.asStateFlow()
 
     fun validateName(name: String): Boolean {
-        _nameError.value = when {
-            name.isBlank() -> "Поле не может быть пустым"
-            name.contains(Regex("[0-9]")) -> "Поле не может содержать цифр"
-            else -> ""
-        }
+        _nameError.value = ValidationUtils.validateName(name)
         return _nameError.value.isEmpty()
     }
 
     fun validateSurname(surname: String): Boolean {
-        _surnameError.value = when {
-            surname.isBlank() -> "Поле не может быть пустым"
-            surname.contains(Regex("[0-9]")) -> "Поле не может содержать цифр"
-            else -> ""
-        }
+        _surnameError.value = ValidationUtils.validateSurname(surname)
         return _surnameError.value.isEmpty()
     }
 
     fun validateEmail(email: String): Boolean {
-        _emailError.value = when {
-            email.isBlank() -> "Поле не может быть пустым"
-            !ValidationUtils.isEmailValid(email) -> "Неверный формат"
-            else -> ""
-        }
+        _emailError.value = ValidationUtils.validateEmail(email)
         return _emailError.value.isEmpty()
     }
 
     fun validatePassword(password: String): Boolean {
-        _passwordError.value = when {
-            password.isBlank() -> "Поле не может быть пустым"
-            !ValidationUtils.isPasswordValid(password) -> "Пароль должен включать в себя:\n8 символов\n1 заглавный символ\n1 цифру"
-            else -> ""
-        }
+        _passwordError.value = ValidationUtils.validatePassword(password)
         return _passwordError.value.isEmpty()
     }
 

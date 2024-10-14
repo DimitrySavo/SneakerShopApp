@@ -75,14 +75,17 @@ fun RegisterScreen(
                 navController.navigate(Paths.STORE) {
                     popUpTo(Paths.LOGIN) { inclusive = true }
                     popUpTo(Paths.REGISTER) { inclusive = true}
+                }.also {
+                    registerViewModel.resetRegisterState()
                 }
             }
             false -> {
-                Log.e("RegisterScreen", "Some error happened")
+                Log.e("RegisterScreen", "Some error happened").also {
+                    registerViewModel.resetRegisterState()
+                }
             }
             else -> {}
         }
-        registerViewModel.resetRegisterState()
     }
 
     Column(

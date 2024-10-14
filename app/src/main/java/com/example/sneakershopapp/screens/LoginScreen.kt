@@ -3,92 +3,74 @@ package com.example.sneakershopapp.screens
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.sneakershopapp.Paths
 import com.example.sneakershopapp.composables.BackIconButton
-import com.example.sneakershopapp.composables.DefaultOutlinedTextField
-import com.example.sneakershopapp.composables.PasswordTextField
 import com.example.sneakershopapp.composables.TextFieldTopLabel
 import com.example.sneakershopapp.model.LoginSate
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 import com.example.sneakershopapp.utils.ValidationUtils
+import com.example.sneakershopapp.viewmodel.LoginViewModel
 import com.example.sneakershopapp.viewmodel.UserViewModel
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    loginViewModel: LoginViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     val user by userViewModel.user.collectAsState()
     val password by userViewModel.password.collectAsState()
-    val loginState by userViewModel.loginState.collectAsState()
+    val loginState by loginViewModel.loginState.collectAsState()
+
+    val emailError by loginViewModel.emailError.collectAsState()
 
     LaunchedEffect(loginState) {
         when(loginState) {
-            is LoginSate.Success -> navController.navigate(Paths.STORE) {
-                popUpTo(Paths.LOGIN) { inclusive = true }
-            }.also {
-                userViewModel.resetLoginState()
-            }
-
-            is LoginSate.Error -> Toast.makeText(context, (loginState as LoginSate.Error).message, Toast.LENGTH_SHORT)
-                .show().also {
-                    userViewModel.resetLoginState()
+            true -> {
+                navController.navigate(Paths.STORE) {
+                    popUpTo(Paths.LOGIN) { inclusive = true }
                 }
-
-            is LoginSate.Loading -> {}
+                loginViewModel.resetLoginState()
+            }
+            false -> {
+                Log.e("LoginScreen", "Some error happened")
+                loginViewModel.resetLoginState()
+            }
+            else -> {}
         }
     }
 
@@ -152,8 +134,8 @@ fun LoginScreen(
                 labelText = "E-mail",
                 fieldValue = user.email,
                 placeholder = "xyz@gmail.com",
-                errorMessage = "Email не соответсвует формату",
-                errorValidator = ValidationUtils::isEmailValid
+                errorMessage = emailError,
+                errorValidator = { true }
             ) {
                 userViewModel.updateUser(email = it)
             }
@@ -167,8 +149,8 @@ fun LoginScreen(
                 labelText = "Пароль",
                 placeholder = "*******",
                 fieldValue = password,
-                errorMessage = "Ошибка пароля",
-                errorValidator = ValidationUtils::isPasswordValid //пока что так, но по хорошему заменить все это(эти валидации работаю постоянно, что может плохо сказаться на overall восприятии интерфейса)
+                errorMessage = "",
+                errorValidator = { true }
             ) {
                 userViewModel.updatePassword(it)
             }
@@ -192,7 +174,7 @@ fun LoginScreen(
             )
             Button(
                 onClick = {
-                    userViewModel.loginUser()
+                    userViewModel.loginUser(loginViewModel)
                 },
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
