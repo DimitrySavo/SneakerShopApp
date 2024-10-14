@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                     val shopViewModel = viewModel<ShopViewModel>()
                     userViewModel.logoutUser()
                     val startDestination =
-                        if (userViewModel.isUserRegistered()) "store" else "hello"
+                        if (userViewModel.isUserRegistered()) Paths.STORE else Paths.HELLO
 
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = startDestination) {

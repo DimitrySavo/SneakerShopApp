@@ -1,7 +1,10 @@
 package com.example.sneakershopapp.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.sneakershopapp.Paths
 import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.TextFieldTopLabel
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
@@ -61,6 +67,23 @@ fun RegisterScreen(
     val surnameError by registerViewModel.surnameError.collectAsState()
     val emailError by registerViewModel.emailError.collectAsState()
     val passwordError by registerViewModel.passwordError.collectAsState()
+    val registerSate by registerViewModel.registerState.collectAsState()
+
+    LaunchedEffect(registerSate) {
+        when(registerSate){
+            true -> {
+                navController.navigate(Paths.STORE) {
+                    popUpTo(Paths.LOGIN) { inclusive = true }
+                    popUpTo(Paths.REGISTER) { inclusive = true}
+                }
+            }
+            false -> {
+                Log.e("RegisterScreen", "Some error happened")
+            }
+            else -> {}
+        }
+        registerViewModel.resetRegisterState()
+    }
 
     Column(
         modifier = Modifier
@@ -78,7 +101,7 @@ fun RegisterScreen(
         ) {
             val (backButton, register, instruction, nameBlock, surnameBlock, emailBlock, passwordBlock, personalDataAgree, registerButton) = createRefs()
             BackIconButton(
-                isEnabled = true,
+                isEnabled = navController.previousBackStackEntry != null,
                 modifier = Modifier
                     .constrainAs(backButton) {
                         top.linkTo(parent.top)
@@ -247,18 +270,21 @@ fun RegisterScreen(
                 color = MaterialTheme.colorScheme.onSecondary
             )
 
-            TextButton(
-                onClick = {
-                    //
-                },
-                contentPadding = PaddingValues(0.dp)
-            ) {
-                Text(
-                    text = " Войти",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
+            Text(
+                text = " Войти",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = {
+                            navController.navigate(Paths.LOGIN) {
+                                popUpTo(Paths.LOGIN) { inclusive = true } // чтобы избежать потери экрана из за убогого popUpTo можно использовать проверку текущего backstackEntry, и при наличии жкрана просто переходить на него, но эт душно и не то чтобы прям таки нужно
+                            }
+                        }
+                    )
+            )
         }
     }
 }

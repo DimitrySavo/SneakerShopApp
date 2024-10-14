@@ -84,12 +84,12 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
 
     fun registerUser(registerViewModel: RegisterViewModel) = viewModelScope.launch {
         when (val result = dataService.registerUser(_user.value, _password.value)) {
-            is FunctionResult.Success -> Log.i(
-                "Register",
-                "User ${result.data} successfully registered"
-            )
-
+            is FunctionResult.Success -> {
+                registerViewModel.updateRegisterState(true)
+                Log.i("Register", "User ${result.data} successfully registered")
+            }
             is FunctionResult.Error -> {
+                registerViewModel.updateRegisterState(false)
                 when (result.message) {
                     "Email is already in use" -> {
                         registerViewModel.updateEmailMessage("Пользователь с таким email уже существует")

@@ -39,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -107,13 +108,16 @@ fun LoginScreen(
         ) {
             val (backButton, hello, instruction, emailBlock, passwordBlock, forgotPassword, logInButton) = createRefs()
             BackIconButton(
-                isEnabled = false,
+                isEnabled = navController.previousBackStackEntry != null,
                 modifier = Modifier
                     .constrainAs(backButton) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                     }
-            ) {}
+            ) {
+                navController.popBackStack()
+            }
+
             Text(
                 text = "Привет!",
                 color = MaterialTheme.colorScheme.onBackground,
@@ -232,7 +236,9 @@ fun LoginScreen(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = {
-                        navController.navigate(Paths.REGISTER)
+                        navController.navigate(Paths.REGISTER) {
+                            popUpTo(Paths.REGISTER) { inclusive = true }
+                        }
                     }
                 )
             )

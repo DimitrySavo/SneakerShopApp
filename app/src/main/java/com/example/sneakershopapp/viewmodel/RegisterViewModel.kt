@@ -20,6 +20,9 @@ class RegisterViewModel() : ViewModel() {
     private val _passwordError = MutableStateFlow<String>("")
     val passwordError = _passwordError.asStateFlow()
 
+    private val _registerState = MutableStateFlow<Boolean?>(null)
+    val registerState = _registerState.asStateFlow()
+
     fun validateName(name: String): Boolean {
         _nameError.value = when {
             name.isBlank() -> "Поле не может быть пустым"
@@ -82,5 +85,13 @@ class RegisterViewModel() : ViewModel() {
                 "password is $it"
             )
         }
+    }
+
+    fun updateRegisterState(isSuccess: Boolean) {
+        _registerState.value = isSuccess
+    }
+
+    fun resetRegisterState() {
+        _registerState.value = null
     }
 }
