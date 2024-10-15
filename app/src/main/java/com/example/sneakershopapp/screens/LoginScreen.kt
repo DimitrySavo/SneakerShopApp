@@ -65,6 +65,7 @@ fun LoginScreen(
                     popUpTo(Paths.LOGIN) { inclusive = true }
                 }
                 loginViewModel.resetLoginState()
+                loginViewModel.resetErrorMessages()
             }
             false -> {
                 Log.e("LoginScreen", "Some error happened")
@@ -97,6 +98,7 @@ fun LoginScreen(
                         start.linkTo(parent.start)
                     }
             ) {
+                loginViewModel.resetErrorMessages()
                 navController.popBackStack()
             }
 
@@ -221,6 +223,7 @@ fun LoginScreen(
                         navController.navigate(Paths.REGISTER) {
                             popUpTo(Paths.REGISTER) { inclusive = true }
                         }
+                        loginViewModel.resetErrorMessages()
                     }
                 )
             )

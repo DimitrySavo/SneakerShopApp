@@ -23,4 +23,8 @@ class LoginViewModel() : ViewModel() {
     fun resetLoginState() {
         _loginState.value = null
     }
+
+    fun resetErrorMessages() {
+        _emailError.value = ""
+    }
 }

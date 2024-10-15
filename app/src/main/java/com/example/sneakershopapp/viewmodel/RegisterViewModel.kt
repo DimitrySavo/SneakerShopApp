@@ -23,22 +23,22 @@ class RegisterViewModel() : ViewModel() {
     private val _registerState = MutableStateFlow<Boolean?>(null)
     val registerState = _registerState.asStateFlow()
 
-    fun validateName(name: String): Boolean {
+    private fun validateName(name: String): Boolean {
         _nameError.value = ValidationUtils.validateName(name)
         return _nameError.value.isEmpty()
     }
 
-    fun validateSurname(surname: String): Boolean {
+    private fun validateSurname(surname: String): Boolean {
         _surnameError.value = ValidationUtils.validateSurname(surname)
         return _surnameError.value.isEmpty()
     }
 
-    fun validateEmail(email: String): Boolean {
+    private fun validateEmail(email: String): Boolean {
         _emailError.value = ValidationUtils.validateEmail(email)
         return _emailError.value.isEmpty()
     }
 
-    fun validatePassword(password: String): Boolean {
+    private fun validatePassword(password: String): Boolean {
         _passwordError.value = ValidationUtils.validatePassword(password)
         return _passwordError.value.isEmpty()
     }
@@ -77,5 +77,12 @@ class RegisterViewModel() : ViewModel() {
 
     fun resetRegisterState() {
         _registerState.value = null
+    }
+
+    fun resetErrorMessages() {
+        _nameError.value = ""
+        _surnameError.value = ""
+        _emailError.value = ""
+        _passwordError.value = ""
     }
 }

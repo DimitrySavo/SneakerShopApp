@@ -77,6 +77,7 @@ fun RegisterScreen(
                     popUpTo(Paths.REGISTER) { inclusive = true}
                 }.also {
                     registerViewModel.resetRegisterState()
+                    registerViewModel.resetErrorMessages()
                 }
             }
             false -> {
@@ -111,6 +112,7 @@ fun RegisterScreen(
                         start.linkTo(parent.start)
                     }
             ) {
+                registerViewModel.resetErrorMessages()
                 navController.popBackStack()
             }
 
@@ -285,6 +287,7 @@ fun RegisterScreen(
                             navController.navigate(Paths.LOGIN) {
                                 popUpTo(Paths.LOGIN) { inclusive = true } // чтобы избежать потери экрана из за убогого popUpTo можно использовать проверку текущего backstackEntry, и при наличии жкрана просто переходить на него, но эт душно и не то чтобы прям таки нужно
                             }
+                            registerViewModel.resetErrorMessages()
                         }
                     )
             )

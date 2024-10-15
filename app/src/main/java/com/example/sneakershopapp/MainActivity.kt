@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.sneakershopapp.screens.ForgotPasswordEnterEmailScreen
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 import com.example.sneakershopapp.viewmodel.ShopViewModel
 import com.example.sneakershopapp.viewmodel.UserViewModel
@@ -53,9 +54,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable(Paths.FORGOT_PASSWORD) {
-                                Text(
-                                    text = "placeholder for forgotPassword Screen"
-                                )
+                                ForgotPasswordEnterEmailScreen(navController = navController, userViewModel = userViewModel)
                             }
                         }
                         composable(Paths.STORE) {
