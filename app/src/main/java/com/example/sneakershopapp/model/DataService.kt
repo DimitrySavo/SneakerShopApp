@@ -86,11 +86,11 @@ class DataService{
 
     suspend fun getUnauthorizedName(userEmail: String): FunctionResult<String> {
         val userSnapshot = db.collection("users")
-            .whereEqualTo("Email", userEmail)
+            .whereEqualTo("email", userEmail)
             .get()
             .await()
         return if (!userSnapshot.isEmpty){
-            FunctionResult.Success(userSnapshot.documents[0].get("Name").toString())
+            FunctionResult.Success(userSnapshot.documents[0].get("name").toString())
         } else {
             FunctionResult.Error("Failed to get user with such email")
         }
@@ -180,7 +180,7 @@ class DataService{
         }
         return  try {
             EmailMock.SendEmail(otpCode, name, userEmail)
-            FunctionResult.Success("Email sent successfully")
+            FunctionResult.Success(otpCode)
         } catch (ex: Exception){
             Log.e("Email sending: ", "$ex")
             FunctionResult.Error("Error: ${ex.message}")

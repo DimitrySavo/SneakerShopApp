@@ -18,6 +18,7 @@ import com.example.sneakershopapp.viewmodel.ShopViewModel
 import com.example.sneakershopapp.viewmodel.UserViewModel
 import com.example.sneakershopapp.screens.HelloScreensPager
 import com.example.sneakershopapp.screens.LoginScreen
+import com.example.sneakershopapp.screens.OTPCodeCheckScreen
 import com.example.sneakershopapp.screens.RegisterScreen
 import com.example.sneakershopapp.ui.theme.ProvidePadding
 
@@ -55,6 +56,9 @@ class MainActivity : ComponentActivity() {
                             }
                             composable(Paths.FORGOT_PASSWORD) {
                                 ForgotPasswordEnterEmailScreen(navController = navController, userViewModel = userViewModel)
+                            }
+                            composable(Paths.OTP) {
+                                OTPCodeCheckScreen()
                             }
                         }
                         composable(Paths.STORE) {
@@ -105,4 +109,5 @@ object Paths {
     const val DETAILS = "orderDetails"
     const val INFO = "userInfo"
     const val SETTINGS = "settings"
+    const val OTP = "otpCode"
 }

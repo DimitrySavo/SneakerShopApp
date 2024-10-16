@@ -12,20 +12,24 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.sneakershopapp.Paths
 import com.example.sneakershopapp.composables.BackIconButton
+import com.example.sneakershopapp.composables.CheckEmailPopup
 import com.example.sneakershopapp.composables.DefaultOutlinedTextField
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
-import com.example.sneakershopapp.viewmodel.EmailForForgotPass
 import com.example.sneakershopapp.viewmodel.UserViewModel
 
 @Composable
@@ -33,13 +37,29 @@ fun ForgotPasswordEnterEmailScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     userViewModel: UserViewModel,
-    emailForForgotPass: EmailForForgotPass = viewModel()
 ) {
     val scrollState = rememberScrollState()
 
     val user by userViewModel.user.collectAsState()
+    var emailMessage by rememberSaveable { mutableStateOf("") }
+    var emailSentState by rememberSaveable { mutableStateOf<Boolean?>(null) }
 
-    val emailError by emailForForgotPass.emailError.collectAsState()
+    LaunchedEffect(emailSentState) {
+        when(emailSentState){
+            false -> {
+                emailSentState = null
+            }
+            else -> {}
+        }
+    }
+
+    if (emailSentState == true) {
+        CheckEmailPopup {
+            navController.navigate(Paths.OTP)
+            emailMessage = ""
+            emailSentState = null
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -58,7 +78,7 @@ fun ForgotPasswordEnterEmailScreen(
             val (backButton, forgotPasswordTitle, instruction, emailText, getCode) = createRefs()
 
             BackIconButton(
-                isEnabled = false,
+                isEnabled = navController.previousBackStackEntry != null,
                 modifier = Modifier
                     .constrainAs(backButton) {
                         top.linkTo(parent.top)
@@ -104,14 +124,14 @@ fun ForgotPasswordEnterEmailScreen(
                     .padding(bottom = LocalPaddingValues.current.vertical),
                 user.email,
                 "xyz@gmail.com",
-                "Email не соответствует стандарту",
+                emailMessage,
             ) {
                 userViewModel.updateUser(email = it)
             }
 
             Button(
                 onClick = {
-                    userViewModel.passwordReset(user.email)
+                    userViewModel.passwordReset(user.email, { message -> emailMessage = message } ) { status -> emailSentState = status }
                 },
                 shape = RoundedCornerShape(20),
                 modifier = Modifier

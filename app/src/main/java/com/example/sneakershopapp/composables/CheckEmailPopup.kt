@@ -48,7 +48,7 @@ fun CheckEmailPopup(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .background(color = MaterialTheme.colorScheme.background)
-                    .fillMaxWidth(0.9f)
+                    .fillMaxWidth(0.8f)
                 // тут такая рамочка имеется, которую почти не видно, но нужно пофиксить, а то как то не круто
             ) {
                 Box(
@@ -84,7 +84,7 @@ fun CheckEmailPopup(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
     }
 }
 
-@Preview(widthDp = 1000, heightDp = 1500)
+@Preview(widthDp = 1024, heightDp = 1336)
 @Composable
 private fun PopupPreview() {
     ProvidePadding {

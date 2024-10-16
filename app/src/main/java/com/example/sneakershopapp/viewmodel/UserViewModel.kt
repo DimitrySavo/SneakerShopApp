@@ -36,8 +36,6 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
     private val _otpCodeTimer = MutableStateFlow(0L)
     val otpCodeTimer = _otpCodeTimer.asStateFlow()
 
-    private val _errorMessage = MutableSharedFlow<String>()
-    val errorMessage = _errorMessage.asSharedFlow()
 
     private var timerJob: Job? = null
 
@@ -122,17 +120,26 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
         }
     }
 
-    fun passwordReset(userEmail: String) = viewModelScope.launch {
+    fun passwordReset(userEmail: String, setErrorMessage: (String) -> Unit, changeEmailSentStatus: (Boolean) -> Unit) = viewModelScope.launch {
         when (val result = dataService.sendResetPasswordEmail(userEmail)) {
             is FunctionResult.Success -> {
                 _otpCode.value = result.data
                 _otpCodeTimer.value = 50000
+                Log.i("UserViewModel", "Код успешно сгенерирован и отправлен. Код - ${_otpCode.value}.")
                 startOtpTimer()
+                changeEmailSentStatus(true)
             }
 
             is FunctionResult.Error -> {
-                _errorMessage.emit(result.message)
-                return@launch
+                if (result.message == "There is no user with such email") {
+                    Log.e("UserViewModel", "Пользователя с таким email не существует")
+                    setErrorMessage("Проверьте правильность ввода email")
+                    changeEmailSentStatus(false)
+                } else {
+                    Log.e("UserViewModel", "Что-то пошло не так при попытке отправить otp код")
+                    setErrorMessage("Произошла ошибка при отправке кода")
+                    changeEmailSentStatus(false)
+                }
             }
         }
     }
