@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,41 +12,48 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.DefaultOutlinedTextField
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
-import com.example.sneakershopapp.utils.ValidationUtils
+import com.example.sneakershopapp.viewmodel.EmailForForgotPass
 import com.example.sneakershopapp.viewmodel.UserViewModel
 
 @Composable
-fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier, navController: NavController, userViewModel: UserViewModel) {
+fun ForgotPasswordEnterEmailScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    userViewModel: UserViewModel,
+    emailForForgotPass: EmailForForgotPass = viewModel()
+) {
     val scrollState = rememberScrollState()
 
-    var email by remember{
-        mutableStateOf("")
-    }
+    val user by userViewModel.user.collectAsState()
+
+    val emailError by emailForForgotPass.emailError.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
             .background(color = MaterialTheme.colorScheme.background)
-    ){
+    ) {
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = LocalPaddingValues.current.vertical, horizontal = LocalPaddingValues.current.horizontal)
+                .padding(
+                    vertical = LocalPaddingValues.current.vertical,
+                    horizontal = LocalPaddingValues.current.horizontal
+                )
         ) {
             val (backButton, forgotPasswordTitle, instruction, emailText, getCode) = createRefs()
 
@@ -96,20 +102,20 @@ fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier, navController:
                     }
                     .fillMaxWidth()
                     .padding(bottom = LocalPaddingValues.current.vertical),
-                email,
+                user.email,
                 "xyz@gmail.com",
                 "Email не соответствует стандарту",
             ) {
-                email = it
+                userViewModel.updateUser(email = it)
             }
 
             Button(
                 onClick = {
-                    userViewModel.passwordReset(email)
+                    userViewModel.passwordReset(user.email)
                 },
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
-                    .constrainAs(getCode){
+                    .constrainAs(getCode) {
                         top.linkTo(emailText.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
@@ -122,7 +128,7 @@ fun ForgotPasswordEnterEmailScreen(modifier: Modifier = Modifier, navController:
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .padding(vertical = (MaterialTheme.typography.bodyMedium.fontSize.value.dp/2))
+                        .padding(vertical = (MaterialTheme.typography.bodyMedium.fontSize.value.dp / 2))
                 )
             }
 
