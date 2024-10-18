@@ -1,21 +1,15 @@
 package com.example.sneakershopapp.viewmodel
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sneakershopapp.SneakerApplication
 import com.example.sneakershopapp.model.DataService
 import com.example.sneakershopapp.model.FunctionResult
-import com.example.sneakershopapp.model.LoginSate
 import com.example.sneakershopapp.model.User
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -30,8 +24,7 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
     private val _userUid = MutableStateFlow<String?>(null)
     val userUid = _userUid.asStateFlow()
 
-    private val _otpCode = MutableStateFlow<String?>(null)
-    val otpCode = _otpCode.asStateFlow()
+    private var _otpCode: String? = null
 
     private val _otpCodeTimer = MutableStateFlow(0L)
     val otpCodeTimer = _otpCodeTimer.asStateFlow()
@@ -120,12 +113,12 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
         }
     }
 
-    fun passwordReset(userEmail: String, setErrorMessage: (String) -> Unit, changeEmailSentStatus: (Boolean) -> Unit) = viewModelScope.launch {
+    fun passwordReset(userEmail: String = user.value.email, setErrorMessage: (String) -> Unit, changeEmailSentStatus: (Boolean) -> Unit) = viewModelScope.launch {
         when (val result = dataService.sendResetPasswordEmail(userEmail)) {
             is FunctionResult.Success -> {
-                _otpCode.value = result.data
-                _otpCodeTimer.value = 50000
-                Log.i("UserViewModel", "Код успешно сгенерирован и отправлен. Код - ${_otpCode.value}.")
+                _otpCode = result.data
+                _otpCodeTimer.value = 300000
+                Log.i("UserViewModel", "Код успешно сгенерирован и отправлен. Код - ${_otpCode}.")
                 startOtpTimer()
                 changeEmailSentStatus(true)
             }
@@ -144,6 +137,14 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
         }
     }
 
+    fun checkOtpCode(otpCode: String, onSuccess: () -> Unit, onError: () -> Unit) {
+        if (otpCode == _otpCode) {
+            onSuccess()
+        } else {
+            onError()
+        }
+    }
+
     private fun startOtpTimer() {
         timerJob?.cancel()
 
@@ -152,13 +153,13 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
                 delay(1000L)
                 _otpCodeTimer.value -= 1000L
             }
-            _otpCode.value = null
+            _otpCode = null
         }
     }
 
-    private fun stopTimer() {
+    private fun stopOtpTimer() {
         timerJob?.cancel()
-        _otpCode.value = null
+        _otpCode = null
         _otpCodeTimer.value = 0L
     }
 }

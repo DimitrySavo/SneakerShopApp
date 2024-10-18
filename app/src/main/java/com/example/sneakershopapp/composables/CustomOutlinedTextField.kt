@@ -30,6 +30,8 @@ fun DefaultOutlinedTextField(
             shape = RoundedCornerShape(20),
             modifier = Modifier
                 .fillMaxWidth(),
+            singleLine = true,
+            maxLines = 1,
             placeholder = { Text(text = placeholder, style = MaterialTheme.typography.bodyMedium) }
         )
         Text(

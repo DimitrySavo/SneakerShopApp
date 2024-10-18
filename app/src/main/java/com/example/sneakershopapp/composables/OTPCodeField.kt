@@ -19,13 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
+import androidx.core.text.isDigitsOnly
 import com.example.sneakershopapp.ui.theme.customOTPCellColors
-import com.example.sneakershopapp.ui.theme.customOutlinedColors
 
 @Composable
 fun OTPCodeField(modifier: Modifier = Modifier, otpLength: Int, onOtpComplete: (String) -> Unit) {
@@ -44,7 +41,12 @@ fun OTPCodeField(modifier: Modifier = Modifier, otpLength: Int, onOtpComplete: (
                index,
                focusRequesters,
                otpCode
-           ) { }
+           ) { newOtpCode ->
+               otpCode = newOtpCode
+               if(otpCode.length == otpLength){
+                   onOtpComplete(otpCode)
+               }
+           }
        }
 
         LaunchedEffect(Unit) {
@@ -66,14 +68,19 @@ fun OTPCodeCell(
     OutlinedTextField(
         value = if (otpCode.length > index) otpCode[index].toString() else "",
         onValueChange = { value ->
-            if (value.length == 1) {
-                val newOtpCode = if (otpCode.length > index) {
-                    otpCode.replaceRange(index, index + 1, value)
-                } else {
-                    otpCode + value
+            if (value.length == 1 && value.isDigitsOnly()) {
+                val newOtpCode = buildString {
+                    append(otpCode)
+                    if (otpCode.length > index) {
+                        set(index, value[0])  // Заменяем символ в индексе
+                    } else {
+                        append(value)  // Добавляем символ, если индекс совпадает с длиной
+                    }
                 }
-                onOtpChange(newOtpCode)
 
+                onOtpChange(newOtpCode)  // Обновляем код OTP
+
+                // Переход на следующую ячейку
                 if (index < focusRequesters.size - 1) {
                     focusRequesters[index + 1].requestFocus()
                 }
