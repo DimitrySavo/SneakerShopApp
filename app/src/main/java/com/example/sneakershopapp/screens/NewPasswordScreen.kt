@@ -12,19 +12,36 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.PasswordTextField
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
+import com.example.sneakershopapp.ui.theme.ProvidePadding
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
+import com.example.sneakershopapp.utils.ValidationUtils
+import com.example.sneakershopapp.viewmodel.UserViewModel
 
 @Composable
-fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavController, userViewModel: UserViewModel  после окончания верстки нужно вставить это назад в аргументы
+fun NewPasswordScreen(modifier: Modifier = Modifier, navController: NavController, userViewModel: UserViewModel) {
     val scrollState = rememberScrollState()
+    val password by userViewModel.password.collectAsState()
+
+    var passwordError by remember {
+        mutableStateOf("")
+    }
+    var repeatPassword by remember {
+        mutableStateOf("")
+    }
 
     Column(
         modifier = Modifier
@@ -35,19 +52,22 @@ fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavCon
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = LocalPaddingValues.current.vertical, horizontal = LocalPaddingValues.current.horizontal)
+                .padding(
+                    vertical = LocalPaddingValues.current.vertical,
+                    horizontal = LocalPaddingValues.current.horizontal
+                )
         ) {
             val (backButton, newPasswordTitle, newPasswordLabel, newPasswordField, repeatNewPasswordLabel, repeatNewPasswordField, approveButton) = createRefs()
 
             BackIconButton(
-                isEnabled = false,
+                isEnabled = navController.previousBackStackEntry != null,
                 modifier = Modifier
                     .constrainAs(backButton) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                     }
             ) {
-                // Через navControoler делает popBackStack и возвращает на экран login
+                navController.popBackStack()
             }
 
             Text(
@@ -83,9 +103,12 @@ fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavCon
                     }
                     .fillMaxWidth()
                     .padding(bottom = LocalPaddingValues.current.underField),
-                value = "",
+                value = password,
+                errorMessage = passwordError,
                 placeholder = "Пароль"
-            ) { }
+            ) {
+                userViewModel.updatePassword(it)
+            }
 
             Text(
                 text = "Повторите пароль: ",
@@ -107,15 +130,25 @@ fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavCon
                     }
                     .fillMaxWidth()
                     .padding(bottom = LocalPaddingValues.current.vertical),
-                value = "",
+                value = repeatPassword,
+                errorMessage = if (password != repeatPassword) "Пароли не совпадают" else "",
                 placeholder = "Пароль"
-            ) { }
+            ) {
+                repeatPassword = it
+            }
 
             Button(
-                onClick = {},
+                onClick = {
+                    if (password == repeatPassword) {
+                        passwordError = ValidationUtils.validatePassword(password)
+                        if (passwordError == "") {
+                            
+                        }
+                    }
+                },
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
-                    .constrainAs(approveButton){
+                    .constrainAs(approveButton) {
                         top.linkTo(repeatNewPasswordField.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
@@ -128,7 +161,7 @@ fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavCon
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .padding(vertical = (MaterialTheme.typography.bodyMedium.fontSize.value.dp/2))
+                        .padding(vertical = (MaterialTheme.typography.bodyMedium.fontSize.value.dp / 2))
                 )
             }
         }
@@ -148,6 +181,7 @@ fun NewPasswordScreen(modifier: Modifier = Modifier) { //, navController: NavCon
 @Composable
 private fun HelloPagerPreview() {
     SneakerShopAppTheme {
-        NewPasswordScreen()
+        ProvidePadding {
+        }
     }
 }

@@ -45,17 +45,18 @@ fun ForgotPasswordEnterEmailScreen(
     var emailSentState by rememberSaveable { mutableStateOf<Boolean?>(null) }
 
     LaunchedEffect(emailSentState) {
-        when(emailSentState){
+        when (emailSentState) {
             false -> {
                 emailSentState = null
             }
+
             else -> {}
         }
     }
 
     if (emailSentState == true) {
         CheckEmailPopup {
-            navController.navigate(Paths.OTP)
+            navController.popBackStack()
             emailMessage = ""
             emailSentState = null
         }
@@ -131,7 +132,10 @@ fun ForgotPasswordEnterEmailScreen(
 
             Button(
                 onClick = {
-                    userViewModel.passwordReset(user.email, { message -> emailMessage = message } ) { status -> emailSentState = status }
+                    userViewModel.passwordReset(
+                        user.email,
+                        { message -> emailMessage = message }
+                    ) { status -> emailSentState = status }
                 },
                 shape = RoundedCornerShape(20),
                 modifier = Modifier

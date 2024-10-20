@@ -5,6 +5,7 @@ import com.example.sneakershopapp.utils.ValidationUtils
 import com.example.sneakershopapp.utils.testing.EmailMock
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -12,7 +13,7 @@ import com.google.firebase.firestore.getField
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 
-class DataService{
+class DataService {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
@@ -54,7 +55,8 @@ class DataService{
 
     suspend fun unmarkShoeAsFavorite(shoeId: String): FunctionResult<Unit> {
         val currentUserUid = auth.currentUser?.uid ?: return FunctionResult.Error("User is null")
-        val userRef = db.collection("users").document(currentUserUid) // попробовать заменить шаблонный код на inline функции
+        val userRef = db.collection("users")
+            .document(currentUserUid) // попробовать заменить шаблонный код на inline функции
         userRef.update("favorites", FieldValue.arrayRemove(shoeId)).await()
         return FunctionResult.Success(Unit)
     }
@@ -62,15 +64,17 @@ class DataService{
     private suspend fun getUserDoc(): FunctionResult<User> {
         val currentUserUid = auth.currentUser?.uid ?: return FunctionResult.Error("User is null")
         val userSnapshot = db.collection("users").document(currentUserUid).get().await()
-        val user = userSnapshot.toObject<User>() ?: return FunctionResult.Error("User document is null")
+        val user =
+            userSnapshot.toObject<User>() ?: return FunctionResult.Error("User document is null")
         return FunctionResult.Success(user)
     }
 
     suspend fun getFavorites(): FunctionResult<List<String>> {
-        return when(val user = getUserDoc()){
+        return when (val user = getUserDoc()) {
             is FunctionResult.Success -> {
                 FunctionResult.Success(user.data.favorites)
             }
+
             is FunctionResult.Error -> {
                 FunctionResult.Error("Something went wrong in getting user from firebase")
             }
@@ -78,7 +82,7 @@ class DataService{
     }
 
     suspend fun getUserName(): FunctionResult<String> {
-        return when(val user = getUserDoc()) {
+        return when (val user = getUserDoc()) {
             is FunctionResult.Success -> FunctionResult.Success(user.data.name)
             is FunctionResult.Error -> FunctionResult.Error("Cant get name from app data")
         }
@@ -89,7 +93,7 @@ class DataService{
             .whereEqualTo("email", userEmail)
             .get()
             .await()
-        return if (!userSnapshot.isEmpty){
+        return if (!userSnapshot.isEmpty) {
             FunctionResult.Success(userSnapshot.documents[0].get("name").toString())
         } else {
             FunctionResult.Error("Failed to get user with such email")
@@ -99,13 +103,14 @@ class DataService{
     suspend fun addToCart(shoeId: String, shoe: CartShoe): FunctionResult<Unit> {
         val currentUserUid = auth.currentUser?.uid ?: return FunctionResult.Error("User is null")
         val shoeRef = db.collection("Shoes").document(shoeId).get().await()
-        if(shoeRef.exists().not()){
+        if (shoeRef.exists().not()) {
             return FunctionResult.Error("Shoe not found")
-        } else if (shoeRef.toObject<Shoe>()?.sizes?.get(shoe.size)?.inStock == 0L){
+        } else if (shoeRef.toObject<Shoe>()?.sizes?.get(shoe.size)?.inStock == 0L) {
             return FunctionResult.Error("Shoe is out of stock") // should replace with some better callbacks but for now it's ok
         }
         shoe.shoeRef = shoeRef.reference
-        db.collection("users").document(currentUserUid).collection("cart").add(shoe).await() // cant use cloud functions because of free plan
+        db.collection("users").document(currentUserUid).collection("cart").add(shoe)
+            .await() // cant use cloud functions because of free plan
         return FunctionResult.Success(Unit)
     }
 
@@ -118,7 +123,7 @@ class DataService{
 
             Log.i("DataService", "registerUser: $currentUserUid")
             return FunctionResult.Success(currentUserUid)
-        } catch (e: FirebaseAuthUserCollisionException){
+        } catch (e: FirebaseAuthUserCollisionException) {
             Log.e("DataService", "Email is already in use")
             return FunctionResult.Error("Email is already in use")
         } catch (e: Exception) {
@@ -133,8 +138,8 @@ class DataService{
             Log.i("DataService", "loginUser: $email")
             return FunctionResult.Success(Unit)
         } catch (e: Exception) {
-            val errorMessage = when(e){
-                is FirebaseAuthException -> when(e.errorCode){
+            val errorMessage = when (e) {
+                is FirebaseAuthException -> when (e.errorCode) {
                     "ERROR_INVALID_EMAIL" -> "Неверный формат email."
                     "ERROR_USER_NOT_FOUND" -> "Пользователь не найден."
                     "ERROR_WRONG_PASSWORD" -> "Неверный пароль."
@@ -142,6 +147,7 @@ class DataService{
                     "ERROR_TOO_MANY_REQUESTS" -> "Слишком много попыток входа, попробуйте позже."
                     else -> "Ошибка аутентификации: ${e.message}"
                 }
+
                 else -> "Неизвестная ошибка: ${e.message}"
             }
             Log.e("DataService", "loginUser: $errorMessage")
@@ -155,7 +161,7 @@ class DataService{
 
     fun getUserUid(): FunctionResult<String?> {
         return try {
-            if(auth.currentUser == null){
+            if (auth.currentUser == null) {
                 FunctionResult.Success(null)
             } else {
                 FunctionResult.Success(auth.currentUser!!.uid)
@@ -166,24 +172,21 @@ class DataService{
     }
 
     suspend fun sendResetPasswordEmail(userEmail: String): FunctionResult<String> {
-        val otpCode = (100000..999999).random().toString()
-        val name = when(val result = getUserName()) {
-            is  FunctionResult.Success -> {
-                result.data
-            }
-            is FunctionResult.Error -> {
-                when(val firebaseResult = getUnauthorizedName(userEmail)) {
-                    is FunctionResult.Success -> firebaseResult.data
-                    is FunctionResult.Error -> return FunctionResult.Error("There is no user with such email")
-                }
-            }
+        if (db.collection("users").whereEqualTo("email", userEmail).get().await().isEmpty) {
+            Log.e("sendResetPasswordEmail", "Invalid email: $userEmail not found")
+            return FunctionResult.Error("Пользователь с таким email не найден")
         }
-        return  try {
-            EmailMock.SendEmail(otpCode, name, userEmail)
-            FunctionResult.Success(otpCode)
-        } catch (ex: Exception){
-            Log.e("Email sending: ", "$ex")
-            FunctionResult.Error("Error: ${ex.message}")
+
+        return try {
+            auth.sendPasswordResetEmail(userEmail).await()
+            Log.i("sendResetPasswordEmail", "Password reset email successfully sent to $userEmail")
+            FunctionResult.Success("Письмо с ссылкой успешно отправлено на почту $userEmail")
+        } catch (ex: FirebaseAuthInvalidUserException) {
+            Log.e("sendResetPasswordEmail", "Invalid email: $userEmail not found")
+            FunctionResult.Error("Пользователь с таким email не найден")
+        } catch (ex: Exception) {
+            Log.e("sendResetPasswordEmail", "Error: ${ex.localizedMessage}")
+            FunctionResult.Error("Произошла ошибка")
         }
     }
 }

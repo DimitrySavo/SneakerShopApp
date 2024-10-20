@@ -2,8 +2,9 @@ package com.example.sneakershopapp.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,11 +16,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -28,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.sneakershopapp.R
@@ -37,13 +40,18 @@ import com.example.sneakershopapp.model.User
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.ProvidePadding
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
+import com.example.sneakershopapp.viewmodel.UserViewModel
 
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier) {
+fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController, userViewModel: UserViewModel) {
     val scrollState = rememberScrollState()
 
-    val user by remember {
+    var user by remember{
         mutableStateOf(User())
+    }
+
+    LaunchedEffect(Unit) {
+        user = userViewModel.user.value
     }
 
     Column(
@@ -60,7 +68,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                     horizontal = LocalPaddingValues.current.horizontal
                 )
         ) {
-            val (backButtonLabel, profileImage, changeProfileDataButton, nameBlock, surnameBlock, emailBlock, deliveryAddressBlock, phoneNumberBlock, saveButton) = createRefs()
+            val (backButtonLabel, profileImage, userName, changeProfileDataButton, nameBlock, surnameBlock, emailBlock, deliveryAddressBlock, phoneNumberBlock, saveButton) = createRefs()
 
             BackButtonMiddleLabel(
                 modifier = Modifier
@@ -69,7 +77,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                     },
                 labelText = "Профиль"
             ) {
-
+                navController.popBackStack()
             }
 
             Image(
@@ -92,22 +100,41 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                     }
             )
 
-            TextButton(
-                onClick = {},
-                contentPadding = PaddingValues(0.dp),
+            Text(
+                text = "${user.name} ${user.surname}",
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier
-                    .constrainAs(changeProfileDataButton) {
+                    .constrainAs(userName) {
                         top.linkTo(profileImage.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
-            ) {
-                Text(
-                    text = "Изменить данные профиля",
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleSmall
-                )
-            }
+                    .padding(vertical = LocalPaddingValues.current.underField)
+            )
+
+            Text(
+                text = "Изменить фото профиля",
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier
+                    .constrainAs(changeProfileDataButton) {
+                        top.linkTo(userName.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .padding(
+                        vertical = LocalPaddingValues.current.underField
+                    )
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = {
+//интент в галерею для выбора нового фота профиля
+                        }
+                    )
+            )
+
 
             TextFieldTopLabel(
                 modifier = Modifier
@@ -189,14 +216,14 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                 onClick = {},
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
-                    .constrainAs(saveButton){
+                    .constrainAs(saveButton) {
                         top.linkTo(phoneNumberBlock.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
                     .fillMaxWidth()
                     .alpha(
-                        if(false) 1f else 0.6f
+                        if (false) 1f else 0.6f
                     )
             ) {
                 Text(
@@ -225,7 +252,6 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 private fun HelloPagerPreview() {
     ProvidePadding {
         SneakerShopAppTheme {
-            ProfileScreen()
         }
     }
 }

@@ -115,22 +115,15 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
 
     fun passwordReset(userEmail: String = user.value.email, setErrorMessage: (String) -> Unit, changeEmailSentStatus: (Boolean) -> Unit) = viewModelScope.launch {
         when (val result = dataService.sendResetPasswordEmail(userEmail)) {
-            is FunctionResult.Success -> {
-                _otpCode = result.data
-                _otpCodeTimer.value = 300000
-                Log.i("UserViewModel", "Код успешно сгенерирован и отправлен. Код - ${_otpCode}.")
-                startOtpTimer()
-                changeEmailSentStatus(true)
-            }
-
+            is FunctionResult.Success -> changeEmailSentStatus(true)
             is FunctionResult.Error -> {
-                if (result.message == "There is no user with such email") {
+                if (result.message == "Пользователь с таким email не найден") {
                     Log.e("UserViewModel", "Пользователя с таким email не существует")
                     setErrorMessage("Проверьте правильность ввода email")
                     changeEmailSentStatus(false)
                 } else {
-                    Log.e("UserViewModel", "Что-то пошло не так при попытке отправить otp код")
-                    setErrorMessage("Произошла ошибка при отправке кода")
+                    Log.e("UserViewModel", "Что-то пошло не так при попытке отправить письмо")
+                    setErrorMessage("Произошла ошибка при отправке письма")
                     changeEmailSentStatus(false)
                 }
             }

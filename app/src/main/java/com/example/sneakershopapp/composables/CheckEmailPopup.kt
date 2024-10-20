@@ -74,7 +74,7 @@ fun CheckEmailPopup(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
                 )
 
                 Text(
-                    text = "Мы отправили код восстановления пароля на вашу электронную почту",
+                    text = "Мы отправили письмо с ссылкой для ввода новго пароля на вашу почту",
                     color = MaterialTheme.colorScheme.onSecondary,
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center

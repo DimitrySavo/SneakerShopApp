@@ -20,6 +20,7 @@ import com.example.sneakershopapp.screens.HelloScreensPager
 import com.example.sneakershopapp.screens.LoginScreen
 import com.example.sneakershopapp.screens.NewPasswordScreen
 import com.example.sneakershopapp.screens.OTPCodeCheckScreen
+import com.example.sneakershopapp.screens.ProfileScreen
 import com.example.sneakershopapp.screens.RegisterScreen
 import com.example.sneakershopapp.ui.theme.ProvidePadding
 
@@ -56,13 +57,21 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable(Paths.FORGOT_PASSWORD) {
-                                ForgotPasswordEnterEmailScreen(navController = navController, userViewModel = userViewModel)
+                                ForgotPasswordEnterEmailScreen(
+                                    navController = navController,
+                                    userViewModel = userViewModel
+                                )
                             }
                             composable(Paths.OTP) {
-                                OTPCodeCheckScreen(userViewModel = userViewModel, navController = navController)
+                                OTPCodeCheckScreen(
+                                    userViewModel = userViewModel,
+                                    navController = navController
+                                )
                             }
-                            composable(Paths.NEW_PASSWORD){
-                                NewPasswordScreen()
+                            composable(Paths.NEW_PASSWORD) {
+                                Text(
+                                    text = "Placeholder for New password"
+                                )
                             }
                         }
                         composable(Paths.STORE) {
@@ -87,7 +96,7 @@ class MainActivity : ComponentActivity() {
                         }
                         navigation(startDestination = Paths.INFO, route = "profile") {
                             composable(Paths.INFO) {
-
+                                ProfileScreen()
                             }
                             composable(Paths.SETTINGS) {
 
