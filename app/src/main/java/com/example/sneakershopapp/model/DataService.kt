@@ -1,8 +1,11 @@
 package com.example.sneakershopapp.model
 
 import android.util.Log
+import androidx.credentials.CreatePasswordResponse
 import com.example.sneakershopapp.utils.ValidationUtils
 import com.example.sneakershopapp.utils.testing.EmailMock
+import com.google.firebase.auth.EmailAuthCredential
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -132,11 +135,14 @@ class DataService {
         }
     }
 
-    suspend fun loginUser(email: String, password: String): FunctionResult<Unit> {
+    suspend fun loginUser(email: String, password: String): FunctionResult<User> {
         try {
             auth.signInWithEmailAndPassword(email, password).await()
             Log.i("DataService", "loginUser: $email")
-            return FunctionResult.Success(Unit)
+            return when (val user = getUserDoc()) {
+                is FunctionResult.Success -> FunctionResult.Success(user.data)
+                is FunctionResult.Error -> FunctionResult.Error(user.message)
+            }
         } catch (e: Exception) {
             val errorMessage = when (e) {
                 is FirebaseAuthException -> when (e.errorCode) {
@@ -187,6 +193,37 @@ class DataService {
         } catch (ex: Exception) {
             Log.e("sendResetPasswordEmail", "Error: ${ex.localizedMessage}")
             FunctionResult.Error("Произошла ошибка")
+        }
+    }
+
+    private suspend fun reauthenticateUser(
+        email: String,
+        password: String
+    ): FunctionResult<String> {
+        val user = auth.currentUser
+        return if (user != null) {
+            try {
+                user.reauthenticate(EmailAuthProvider.getCredential(email, password)).await()
+                FunctionResult.Success("Reauthenticated successfully")
+            } catch (ex: Exception) {
+                Log.e("dataService", "$ex")
+                FunctionResult.Error("$ex")
+            }
+        } else {
+            FunctionResult.Error("User isn't authorized")
+        }
+    }
+
+    //Тут email изменяется с помощью updateEmail, потому что в документе пользователя также хранится email.
+    // По сути это рудиментарное хранение(вероятнее всего) и нужно бы заменить updateEmail -> verifyEmailBeforeUpdate
+    // Для этого придется везде переписат логику получения пользователя и его email, поэтому я прям хз
+    // Думаю просто можно переписать всю логику аутентификации пользователей в отдельный модуль и там уже работать со своей postgre базой, но это точно после финальной версии этого корявого проекта
+    suspend fun changeUserData(user: User, oldEmail: String, password: String) : FunctionResult<String> {
+        when (val reauthResult = reauthenticateUser(oldEmail, password)) {
+            is FunctionResult.Success -> {
+                auth.currentUser?.updateEmail(TODO("some email needed"))
+            }
+            is FunctionResult.Error -> return FunctionResult.Error(reauthResult.message)
         }
     }
 }

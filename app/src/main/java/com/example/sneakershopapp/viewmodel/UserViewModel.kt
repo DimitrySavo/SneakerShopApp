@@ -59,7 +59,10 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
 
     fun loginUser(loginViewModel : LoginViewModel) = viewModelScope.launch {
         when (val result = dataService.loginUser(_user.value.email, _password.value)) {
-            is FunctionResult.Success -> loginViewModel.changeLoginState(true)
+            is FunctionResult.Success -> {
+                loginViewModel.changeLoginState(true)
+                _user.value = result.data
+            }
             is FunctionResult.Error -> {
                 loginViewModel.changeEmailMessage(result.message.contains("Ошибка аутентификации"))
                 loginViewModel.changeLoginState(false)
@@ -88,7 +91,11 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
         }
     }
 
-    fun getUserUid() = viewModelScope.launch {
+    fun changeUserData(user: User, password: String) = viewModelScope.launch {
+
+    }
+
+    private fun getUserUid() = viewModelScope.launch {
         when (val userUid = dataService.getUserUid()) {
             is FunctionResult.Success -> {
                 Log.i("User uid", userUid.data ?: "User is null")

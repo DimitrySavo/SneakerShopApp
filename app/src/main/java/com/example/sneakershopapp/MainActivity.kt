@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Path
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -75,9 +77,18 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         composable(Paths.STORE) {
-                            Text(
-                                text = "Store placeholder for now"
-                            )
+                            Column {
+                                Text(
+                                    text = "Store placeholder for now"
+                                )
+                                Button(
+                                    onClick = { navController.navigate(Paths.INFO) }
+                                ) {
+                                    Text(
+                                        text = "to profile"
+                                    )
+                                }
+                            }
                         }
                         composable(Paths.FAVORITES) {
 
@@ -96,7 +107,7 @@ class MainActivity : ComponentActivity() {
                         }
                         navigation(startDestination = Paths.INFO, route = "profile") {
                             composable(Paths.INFO) {
-                                ProfileScreen()
+                                ProfileScreen(navController = navController, userViewModel = userViewModel)
                             }
                             composable(Paths.SETTINGS) {
 

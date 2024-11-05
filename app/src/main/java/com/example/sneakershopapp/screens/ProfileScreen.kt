@@ -1,5 +1,9 @@
 package com.example.sneakershopapp.screens
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,7 +35,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.sneakershopapp.R
@@ -40,14 +48,35 @@ import com.example.sneakershopapp.model.User
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.ProvidePadding
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
+import com.example.sneakershopapp.viewmodel.ProfileViewModel
 import com.example.sneakershopapp.viewmodel.UserViewModel
 
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController, userViewModel: UserViewModel) {
+fun ProfileScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    userViewModel: UserViewModel,
+    profileViewModel: ProfileViewModel = viewModel()
+) {
     val scrollState = rememberScrollState()
 
-    var user by remember{
+    val userFromViewModel by userViewModel.user.collectAsState()
+
+    val profileImageUri by profileViewModel.profileImageUri.collectAsState()
+
+    val nameError by profileViewModel.nameError.collectAsState()
+    val surnameError by profileViewModel.surnameError.collectAsState()
+    val emailError by profileViewModel.emailError.collectAsState()
+    val phoneError by profileViewModel.phoneNumberError.collectAsState()
+
+    var user by remember {
         mutableStateOf(User())
+    }
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) {
+        profileViewModel.changeProfileImageUri(it)
     }
 
     LaunchedEffect(Unit) {
@@ -80,14 +109,12 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController, u
                 navController.popBackStack()
             }
 
-            Image(
-                painter = rememberAsyncImagePainter(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data("") // replace with profile image url
-                        .placeholder(R.drawable.shoe_with_leg_hello)
-                        .error(R.drawable.background_smile)
-                        .build()
-                ),
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(profileImageUri ?: "")
+                    .placeholder(R.drawable.shoe_with_leg_hello)
+                    .error(R.drawable.background_smile)
+                    .build(),
                 contentDescription = "Profile image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -101,7 +128,7 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController, u
             )
 
             Text(
-                text = "${user.name} ${user.surname}",
+                text = "${userFromViewModel.name} ${userFromViewModel.surname}",
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier
@@ -130,11 +157,12 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController, u
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = {
-//интент в галерею для выбора нового фота профиля
+                            photoPickerLauncher.launch(
+                                input = PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
                         }
                     )
             )
-
 
             TextFieldTopLabel(
                 modifier = Modifier
@@ -143,12 +171,12 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController, u
                         start.linkTo(parent.start)
                     },
                 labelText = "Имя",
-                fieldValue = "",
+                fieldValue = user.name,
                 placeholder = "XXXXXX",
-                errorMessage = "",
+                errorMessage = nameError,
                 errorValidator = { true },
             ) {
-
+                user = user.copy(name = it)
             }
 
             TextFieldTopLabel(
@@ -158,12 +186,12 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController, u
                         start.linkTo(parent.start)
                     },
                 labelText = "Фамилия",
-                fieldValue = "",
+                fieldValue = user.surname,
                 placeholder = "XXXXXX",
-                errorMessage = "",
+                errorMessage = surnameError,
                 errorValidator = { true },
             ) {
-
+                user = user.copy(surname = it)
             }
 
             TextFieldTopLabel(
@@ -173,12 +201,12 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController, u
                         start.linkTo(parent.start)
                     },
                 labelText = "E-mail",
-                fieldValue = "",
+                fieldValue = user.email,
                 placeholder = "xyz@gmail.com",
-                errorMessage = "",
+                errorMessage = emailError,
                 errorValidator = { true }
             ) {
-
+                user = user.copy(email = it)
             }
 
             TextFieldTopLabel(
@@ -204,17 +232,22 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController, u
                     }
                     .padding(bottom = LocalPaddingValues.current.underField),
                 labelText = "Телефон",
-                fieldValue = "",
+                fieldValue = user.phoneNumber ?: "",
                 placeholder = "X-(XXX)-XXX-XX-XX",
-                errorMessage = "",
+                errorMessage = phoneError,
                 errorValidator = { true }
             ) {
-
+                user = user.copy(phoneNumber = it)
             }
 
             Button(
-                onClick = {},
+                onClick = {
+                    if (profileViewModel.validations(user)) {
+
+                    }
+                },
                 shape = RoundedCornerShape(20),
+                enabled = user != userFromViewModel,
                 modifier = Modifier
                     .constrainAs(saveButton) {
                         top.linkTo(phoneNumberBlock.bottom)
@@ -223,7 +256,7 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController, u
                     }
                     .fillMaxWidth()
                     .alpha(
-                        if (false) 1f else 0.6f
+                        if (user != userFromViewModel) 1f else 0.6f
                     )
             ) {
                 Text(
@@ -231,7 +264,7 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController, u
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .padding(vertical = (MaterialTheme.typography.bodyMedium.fontSize.value.dp/2))
+                        .padding(vertical = (MaterialTheme.typography.bodyMedium.fontSize.value.dp / 2))
                 )
             }
         }
