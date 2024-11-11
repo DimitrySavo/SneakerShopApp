@@ -17,3 +17,5 @@ data class User(
     )
 }
 
+//Дописать функцию перевода в map<String, Any?>
+

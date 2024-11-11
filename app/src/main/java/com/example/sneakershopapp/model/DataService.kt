@@ -72,6 +72,11 @@ class DataService {
         return FunctionResult.Success(user)
     }
 
+    private suspend fun updateUserDoc(newUser: User): FunctionResult<Unit> {
+        val currentUserUid = auth.currentUser?.uid ?: return FunctionResult.Error("User is null")
+        val userRef = db.collection("users").document(currentUserUid)
+    }
+
     suspend fun getFavorites(): FunctionResult<List<String>> {
         return when (val user = getUserDoc()) {
             is FunctionResult.Success -> {
@@ -221,7 +226,8 @@ class DataService {
     suspend fun changeUserData(user: User, oldEmail: String, password: String) : FunctionResult<String> {
         when (val reauthResult = reauthenticateUser(oldEmail, password)) {
             is FunctionResult.Success -> {
-                auth.currentUser?.updateEmail(TODO("some email needed"))
+                auth.currentUser?.updateEmail(user.email)
+
             }
             is FunctionResult.Error -> return FunctionResult.Error(reauthResult.message)
         }
