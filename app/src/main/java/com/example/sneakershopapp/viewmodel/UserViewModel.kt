@@ -1,12 +1,15 @@
 package com.example.sneakershopapp.viewmodel
 
 import android.util.Log
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sneakershopapp.SneakerApplication
 import com.example.sneakershopapp.model.DataService
 import com.example.sneakershopapp.model.FunctionResult
 import com.example.sneakershopapp.model.User
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,6 +56,19 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
         )
     }
 
+    private fun updateUserInside() = viewModelScope.launch {
+        when (val newUser = dataService.getUserDoc()) {
+            is FunctionResult.Success -> {
+                Log.i("updateUserInsideVM", "User doc get successfully")
+                _user.value = newUser.data
+            }
+
+            is FunctionResult.Error -> {
+                Log.i("updateUserInsideVM", "Something went wrong while getting user doc ${newUser.message}")
+            }
+        }
+    }
+
     fun updatePassword(password: String) {
         _password.value = password
     }
@@ -92,7 +108,17 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
     }
 
     fun changeUserData(user: User, password: String) = viewModelScope.launch {
-
+        when (val result = dataService.changeUserData(
+            user = user,
+            oldEmail = _user.value.email,
+            password = password
+        )) {
+            is FunctionResult.Success -> {
+                Log.i("changeUserDataVM", "User data updated successfully")
+                updateUserInside()
+            }
+            is FunctionResult.Error -> Log.i("changeUserDataVM", "User data cant be updated due some reasons")
+        }
     }
 
     private fun getUserUid() = viewModelScope.launch {

@@ -243,7 +243,7 @@ fun ProfileScreen(
             Button(
                 onClick = {
                     if (profileViewModel.validations(user)) {
-
+                        userViewModel.changeUserData(user, "")
                     }
                 },
                 shape = RoundedCornerShape(20),

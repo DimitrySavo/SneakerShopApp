@@ -109,5 +109,8 @@ dependencies {
     // extended icons
     implementation(libs.androidx.material.icons.extended)
 
+    // kotlin reflect for memberProperties
+    implementation(kotlin("reflect"))
+
     testImplementation(libs.androidx.core)
 }

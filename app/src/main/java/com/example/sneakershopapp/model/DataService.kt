@@ -59,12 +59,12 @@ class DataService {
     suspend fun unmarkShoeAsFavorite(shoeId: String): FunctionResult<Unit> {
         val currentUserUid = auth.currentUser?.uid ?: return FunctionResult.Error("User is null")
         val userRef = db.collection("users")
-            .document(currentUserUid) // попробовать заменить шаблонный код на inline функции
+            .document(currentUserUid)
         userRef.update("favorites", FieldValue.arrayRemove(shoeId)).await()
         return FunctionResult.Success(Unit)
     }
 
-    private suspend fun getUserDoc(): FunctionResult<User> {
+    suspend fun getUserDoc(): FunctionResult<User> {
         val currentUserUid = auth.currentUser?.uid ?: return FunctionResult.Error("User is null")
         val userSnapshot = db.collection("users").document(currentUserUid).get().await()
         val user =
@@ -74,7 +74,8 @@ class DataService {
 
     private suspend fun updateUserDoc(newUser: User): FunctionResult<Unit> {
         val currentUserUid = auth.currentUser?.uid ?: return FunctionResult.Error("User is null")
-        val userRef = db.collection("users").document(currentUserUid)
+        val userRef = db.collection("users").document(currentUserUid).update(newUser.toMap()).await()
+        return FunctionResult.Success(Unit)
     }
 
     suspend fun getFavorites(): FunctionResult<List<String>> {
@@ -226,8 +227,14 @@ class DataService {
     suspend fun changeUserData(user: User, oldEmail: String, password: String) : FunctionResult<String> {
         when (val reauthResult = reauthenticateUser(oldEmail, password)) {
             is FunctionResult.Success -> {
-                auth.currentUser?.updateEmail(user.email)
-
+                try {
+                    auth.currentUser?.updateEmail(user.email) // почему-то почта не меняется с использованием этого метода. Нужно глянуть в чем конкретно ошибка и вообще возможно что даун Я
+                    Log.i("changeUserData", "")
+                    this.updateUserDoc(user)
+                    return FunctionResult.Success("User data updated Successfully")
+                } catch (ex: Exception) {
+                    return FunctionResult.Error("Some error happened with old email = $oldEmail, password = $password, newUser = $user")
+                }
             }
             is FunctionResult.Error -> return FunctionResult.Error(reauthResult.message)
         }
