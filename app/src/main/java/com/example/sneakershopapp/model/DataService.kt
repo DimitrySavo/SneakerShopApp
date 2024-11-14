@@ -1,10 +1,6 @@
 package com.example.sneakershopapp.model
 
 import android.util.Log
-import androidx.credentials.CreatePasswordResponse
-import com.example.sneakershopapp.utils.ValidationUtils
-import com.example.sneakershopapp.utils.testing.EmailMock
-import com.google.firebase.auth.EmailAuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
@@ -12,7 +8,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.getField
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 

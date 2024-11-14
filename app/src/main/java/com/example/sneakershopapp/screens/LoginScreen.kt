@@ -1,7 +1,6 @@
 package com.example.sneakershopapp.screens
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -25,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,10 +34,8 @@ import androidx.navigation.NavController
 import com.example.sneakershopapp.Paths
 import com.example.sneakershopapp.composables.BackIconButton
 import com.example.sneakershopapp.composables.TextFieldTopLabel
-import com.example.sneakershopapp.model.LoginSate
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
-import com.example.sneakershopapp.utils.ValidationUtils
 import com.example.sneakershopapp.viewmodel.LoginViewModel
 import com.example.sneakershopapp.viewmodel.UserViewModel
 
