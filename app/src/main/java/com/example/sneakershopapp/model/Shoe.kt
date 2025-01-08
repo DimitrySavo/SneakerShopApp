@@ -40,21 +40,21 @@ data class Size(
     val usSize: Double,
     val euSize: Double,
     val ruSize: Double,
-    var inStock: Long,
+    var inStock: Map<String, Long>,
     var price: Double
 ){
     constructor():this(
         0.0,
         0.0,
         0.0,
-        0,
+        emptyMap(),
         0.0
     )
 }
 
 fun Shoe.getPriceAndStock() {
-    if (this.sizes.values.any { it.inStock > 0 }) {
-        val sizeInStock = this.sizes.values.first { it.inStock > 0 }
+    if (this.sizes.values.any { it.inStock.values.any { stock -> stock > 0 } }) {
+        val sizeInStock = this.sizes.values.first { it.inStock.values.any { stock -> stock > 0 } }
         this.price = sizeInStock.price
         this.inStock = true
     } else {

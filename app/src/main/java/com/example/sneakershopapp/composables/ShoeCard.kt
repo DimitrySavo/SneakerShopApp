@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.HeartBroken
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
@@ -20,6 +21,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -30,12 +37,29 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.sneakershopapp.model.Shoe
+import com.example.sneakershopapp.model.getPreviewUrl
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.ProvidePadding
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
+import com.example.sneakershopapp.viewmodel.ShopViewModel
 
 @Composable
-fun ShoeCard(shoe: Shoe, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun ShoeCard(
+    shoe: Shoe,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    viewModel: ShopViewModel
+) {
+    val favorites by viewModel.favorites.collectAsState()
+
+    var imageUrl by remember {
+        mutableStateOf("")
+    }
+
+    LaunchedEffect(Unit) {
+        imageUrl = shoe.getPreviewUrl()
+    }
+
     Card(
         modifier = Modifier
             .padding(LocalPaddingValues.current.underLabel)
@@ -50,7 +74,8 @@ fun ShoeCard(shoe: Shoe, modifier: Modifier = Modifier, onClick: () -> Unit) {
                 onClick()
             },
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background)
+            containerColor = MaterialTheme.colorScheme.background
+        )
     ) {
         Column(
             modifier = Modifier
@@ -68,13 +93,17 @@ fun ShoeCard(shoe: Shoe, modifier: Modifier = Modifier, onClick: () -> Unit) {
                         shape = RoundedCornerShape(15.dp)
                     ),
                 onClick = {
-                    //добавить в избранное
+                    if(favorites.contains(shoe.id)) {
+                        viewModel.unmarkShoeAsFavorite(shoeId = shoe.id)
+                    } else {
+                        viewModel.markShoeAsFavorite(shoeId = shoe.id)
+                    }
                 }
             ) {
                 Icon(
-                    imageVector = Icons.Default.HeartBroken,
+                    imageVector = Icons.Default.Favorite,
                     contentDescription = "Add to favorite",
-                    tint = MaterialTheme.colorScheme.onBackground, //TODO сделать проверку на favorite
+                    tint = if (favorites.contains(shoe.id)) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(LocalPaddingValues.current.iconSize),
                 )
             }
@@ -84,7 +113,7 @@ fun ShoeCard(shoe: Shoe, modifier: Modifier = Modifier, onClick: () -> Unit) {
                     .weight(1f)
                     .fillMaxWidth(),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/05856ac7-0129-4395-bd6e-2fe2669025fb/custom-nike-dunk-low-by-you-su24.png")
+                    .data(imageUrl)
                     .crossfade(true)
                     .build(),
                 contentDescription = ""

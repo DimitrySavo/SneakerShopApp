@@ -48,7 +48,8 @@ class MainActivity : ComponentActivity() {
                     shopViewModel.getShoes()
                     val shoes by shopViewModel.shoes.collectAsState()
 
-                    //userViewModel.logoutUser()
+                    userViewModel.logoutUser()
+
                     val startDestination =
                         if (userViewModel.isUserRegistered()) Paths.STORE else Paths.HELLO
 
@@ -90,7 +91,8 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Paths.STORE) {
                             Column {
-                                ShopScreen(list = shoes, navController = navController)
+                                shopViewModel.getShoes()
+                                ShopScreen(list = shoes, navController = navController, shopViewModel = shopViewModel)
                                 Button(
                                     onClick = {
                                         navController.navigate(Paths.INFO)
@@ -104,7 +106,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Paths.SHOE_INFO + "/{ItemId}") { backStackEntry ->
                             val itemId = backStackEntry.arguments?.getString("ItemId")
-                            ShoeScreen(shoe = shoes.first{it.id == itemId}, images = listOf("https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/05856ac7-0129-4395-bd6e-2fe2669025fb/custom-nike-dunk-low-by-you-su24.png", "https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/8ce97c97-3cb9-4e7f-86f4-6f39eef4b2b2/W+BLAZER+MID+%2777+NEXT+NATURE.png", "https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/b1bcbca4-e853-4df7-b329-5be3c61ee057/NIKE+DUNK+LOW+RETRO.png", "https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/0e42ff41-41ab-42cb-b8f3-8c42d8ae0d79/NIKE+AIR+MAX+PLUS.png"))
+                            ShoeScreen(
+                                shoe = shoes.first { it.id == itemId }
+                            )
                         }
                         composable(Paths.FAVORITES) {
 
@@ -123,7 +127,10 @@ class MainActivity : ComponentActivity() {
                         }
                         navigation(startDestination = Paths.INFO, route = "profile") {
                             composable(Paths.INFO) {
-                                ProfileScreen(navController = navController, userViewModel = userViewModel)
+                                ProfileScreen(
+                                    navController = navController,
+                                    userViewModel = userViewModel
+                                )
                             }
                             composable(Paths.SETTINGS) {
 
@@ -153,7 +160,7 @@ object Paths {
     const val OTP = "otpCode"
     const val NEW_PASSWORD = "newPassword"
 
-    fun getShoeScreen(id: String) : String {
-        return Paths.SHOE_INFO + "/$id"
+    fun getShoeScreen(id: String): String {
+        return SHOE_INFO + "/$id"
     }
 }

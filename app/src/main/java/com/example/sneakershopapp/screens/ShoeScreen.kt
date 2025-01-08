@@ -28,6 +28,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,17 +41,25 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.sneakershopapp.composables.BackButtonMiddleLabel
 import com.example.sneakershopapp.model.Shoe
+import com.example.sneakershopapp.model.getImagesUrls
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.ProvidePadding
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShoeScreen(modifier: Modifier = Modifier, shoe: Shoe, images: List<String>) {
+fun ShoeScreen(modifier: Modifier = Modifier, shoe: Shoe) {
     val scrollState = rememberScrollState()
+    var images by remember {
+        mutableStateOf<List<String>>(emptyList())
+    }
 
     val pagerState = rememberPagerState {
         images.size
+    }
+
+    LaunchedEffect(Unit) {
+        images = shoe.getImagesUrls()
     }
 
     Column(
@@ -58,7 +71,7 @@ fun ShoeScreen(modifier: Modifier = Modifier, shoe: Shoe, images: List<String>) 
                 start = 10.dp,
                 end = 10.dp,
                 bottom = LocalPaddingValues.current.vertical
-            ) // TODO заменить на адаптивное значение
+            )
             .scrollable(scrollState, Orientation.Vertical),
     ) {
         BackButtonMiddleLabel(
@@ -186,8 +199,7 @@ private fun HelloPagerPreview() {
                     tags = emptyList(),
                     imageCollectionUrl = "",
                     sizes = emptyMap()
-                ),
-                images = emptyList()
+                )
             )
         }
     }

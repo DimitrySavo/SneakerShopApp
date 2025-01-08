@@ -107,11 +107,14 @@ class DataService {
     suspend fun addToCart(shoeId: String, shoe: CartShoe): FunctionResult<Unit> {
         val currentUserUid = auth.currentUser?.uid ?: return FunctionResult.Error("User is null")
         val shoeRef = db.collection("Shoes").document(shoeId).get().await()
+
         if (shoeRef.exists().not()) {
             return FunctionResult.Error("Shoe not found")
-        } else if (shoeRef.toObject<Shoe>()?.sizes?.get(shoe.size)?.inStock == 0L) {
-            return FunctionResult.Error("Shoe is out of stock") // should replace with some better callbacks but for now it's ok
         }
+//        else if (shoeRef.get()) {
+//            return FunctionResult.Error("Shoe is out of stock") // should replace with some better callbacks but for now it's ok
+//        }
+
         shoe.shoeRef = shoeRef.reference
         db.collection("users").document(currentUserUid).collection("cart").add(shoe)
             .await() // cant use cloud functions because of free plan

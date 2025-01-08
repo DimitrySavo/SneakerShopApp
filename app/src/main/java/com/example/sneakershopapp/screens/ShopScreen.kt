@@ -26,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,10 +41,19 @@ import com.example.sneakershopapp.model.Shoe
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.ProvidePadding
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
+import com.example.sneakershopapp.viewmodel.ShopViewModel
 
 @Composable
-fun ShopScreen(modifier: Modifier = Modifier, list: List<Shoe>, navController: NavController) {
+fun ShopScreen(
+    modifier: Modifier = Modifier,
+    list: List<Shoe>,
+    navController: NavController,
+    shopViewModel: ShopViewModel
+) {
 
+    LaunchedEffect(Unit) {
+        shopViewModel.getFavorites()
+    }
     //окно с фильтрами можно реализоват с помощью animatedVisibility
     LazyVerticalGrid(
         modifier = Modifier
@@ -151,7 +161,11 @@ fun ShopScreen(modifier: Modifier = Modifier, list: List<Shoe>, navController: N
         items(
             items = list
         ) { shoe ->
-            ShoeCard(shoe = shoe, onClick = { navController.navigate(Paths.getShoeScreen(shoe.id)) })
+            ShoeCard(
+                shoe = shoe,
+                onClick = { navController.navigate(Paths.getShoeScreen(shoe.id)) },
+                viewModel = shopViewModel
+            )
         }
     }
 }

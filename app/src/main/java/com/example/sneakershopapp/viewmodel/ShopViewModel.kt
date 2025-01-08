@@ -27,6 +27,7 @@ class ShopViewModel() : ViewModel(){
     fun getShoes() = viewModelScope.launch {
         when(val shoes = dataService.getShoes()){
             is FunctionResult.Success -> {
+                Log.i("getShoes", "Shoes")
                 _shoes.value = shoes.data
             }
             is FunctionResult.Error -> {
@@ -48,10 +49,12 @@ class ShopViewModel() : ViewModel(){
 
     fun markShoeAsFavorite(shoeId: String = "ET96Bi8yKUJzOEGHCCCI") = viewModelScope.launch {
         dataService.markShoeAsFavorite(shoeId)
+        getFavorites()
     }
 
     fun unmarkShoeAsFavorite(shoeId: String = "ET96Bi8yKUJzOEGHCCCI") = viewModelScope.launch {
         dataService.unmarkShoeAsFavorite(shoeId)
+        getFavorites()
     }
 
 
