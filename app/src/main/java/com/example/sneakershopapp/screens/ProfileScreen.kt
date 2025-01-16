@@ -97,7 +97,7 @@ fun ProfileScreen(
                     horizontal = LocalPaddingValues.current.horizontal
                 )
         ) {
-            val (backButtonLabel, profileImage, userName, changeProfileDataButton, nameBlock, surnameBlock, emailBlock, deliveryAddressBlock, phoneNumberBlock, saveButton) = createRefs()
+            val (backButtonLabel, profileImage, userName, changeProfileDataButton, nameBlock, surnameBlock, deliveryAddressBlock, phoneNumberBlock, saveButton) = createRefs()
 
             BackButtonMiddleLabel(
                 modifier = Modifier
@@ -111,8 +111,8 @@ fun ProfileScreen(
 
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(profileImageUri ?: "")
-                    .placeholder(R.drawable.shoe_with_leg_hello)
+                    .data(profileImageUri)
+                    .placeholder(R.drawable.background_smile)
                     .error(R.drawable.background_smile)
                     .build(),
                 contentDescription = "Profile image",
@@ -196,32 +196,17 @@ fun ProfileScreen(
 
             TextFieldTopLabel(
                 modifier = Modifier
-                    .constrainAs(emailBlock) {
+                    .constrainAs(deliveryAddressBlock) {
                         top.linkTo(surnameBlock.bottom)
                         start.linkTo(parent.start)
                     },
-                labelText = "E-mail",
-                fieldValue = user.email,
-                placeholder = "xyz@gmail.com",
-                errorMessage = emailError,
-                errorValidator = { true }
-            ) {
-                user = user.copy(email = it)
-            }
-
-            TextFieldTopLabel(
-                modifier = Modifier
-                    .constrainAs(deliveryAddressBlock) {
-                        top.linkTo(emailBlock.bottom)
-                        start.linkTo(parent.start)
-                    },
                 labelText = "Адрес",
-                fieldValue = "",
+                fieldValue = user.deliveryAddress ?: "",
                 placeholder = "Ваш адрес доставки",
                 errorMessage = "",
                 errorValidator = { true }
             ) {
-
+                user = user.copy(deliveryAddress = it)
             }
 
             TextFieldTopLabel(
@@ -243,7 +228,7 @@ fun ProfileScreen(
             Button(
                 onClick = {
                     if (profileViewModel.validations(user)) {
-                        userViewModel.changeUserData(user, "")
+                        userViewModel.changeUserData(user)
                     }
                 },
                 shape = RoundedCornerShape(20),

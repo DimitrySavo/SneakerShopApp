@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
                     shopViewModel.getShoes()
                     val shoes by shopViewModel.shoes.collectAsState()
 
-                    userViewModel.logoutUser()
+                    //userViewModel.logoutUser()
 
                     val startDestination =
                         if (userViewModel.isUserRegistered()) Paths.STORE else Paths.HELLO
@@ -108,7 +108,9 @@ class MainActivity : ComponentActivity() {
                             val itemId = backStackEntry.arguments?.getString("ItemId")
                             ShoeScreen(
                                 shoe = shoes.first { it.id == itemId }
-                            )
+                            ) {
+                                navController.popBackStack()
+                            }
                         }
                         composable(Paths.FAVORITES) {
 

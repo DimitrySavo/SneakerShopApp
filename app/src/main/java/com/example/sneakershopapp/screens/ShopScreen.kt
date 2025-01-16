@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterAlt
@@ -30,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -75,7 +77,7 @@ fun ShopScreen(
                             shape = RoundedCornerShape(15.dp)
                         ),
                     onClick = {
-// show left side menu
+                        navController.navigate(Paths.INFO)
                     }
                 ) {
                     Icon(
@@ -89,7 +91,7 @@ fun ShopScreen(
                 Text(
                     text = "Главная",
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium, //TODO написать новый стиль с более жирным текстом(либо сделать с помощью copy)
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(1f),
@@ -100,7 +102,7 @@ fun ShopScreen(
                     modifier = Modifier
                         .background(
                             color = MaterialTheme.colorScheme.onSurface,
-                            shape = RoundedCornerShape(15.dp)
+                            shape = CircleShape
                         ),
                     onClick = {
                         navController.navigate(Paths.CART)

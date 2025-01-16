@@ -38,6 +38,7 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
     init {
         Log.i("UserViewModel init", "Get into init block of userViewModel")
         getUserUid()
+        loginUser()
     }
 
     fun updateUser(
@@ -86,6 +87,17 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
         }
     }
 
+    private fun loginUser() = viewModelScope.launch {
+        when(val result = dataService.loginUser("", "")) {
+            is FunctionResult.Success -> {
+                _user.value = result.data
+            }
+            is FunctionResult.Error -> {
+                Log.e("Login registered user", "How tf u get into shop screen not authorized, huh?")
+            }
+        }
+    }
+
     fun logoutUser() = dataService.logoutUser()
 
     fun registerUser(registerViewModel: RegisterViewModel) = viewModelScope.launch {
@@ -107,11 +119,9 @@ class UserViewModel(private val dataService: DataService = SneakerApplication.ge
         }
     }
 
-    fun changeUserData(user: User, password: String) = viewModelScope.launch {
+    fun changeUserData(user: User) = viewModelScope.launch {
         when (val result = dataService.changeUserData(
-            user = user,
-            oldEmail = _user.value.email,
-            password = password
+            user = user
         )) {
             is FunctionResult.Success -> {
                 Log.i("changeUserDataVM", "User data updated successfully")

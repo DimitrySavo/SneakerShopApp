@@ -48,7 +48,7 @@ import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShoeScreen(modifier: Modifier = Modifier, shoe: Shoe) {
+fun ShoeScreen(modifier: Modifier = Modifier, shoe: Shoe, navigateBack: () -> Unit) {
     val scrollState = rememberScrollState()
     var images by remember {
         mutableStateOf<List<String>>(emptyList())
@@ -79,7 +79,7 @@ fun ShoeScreen(modifier: Modifier = Modifier, shoe: Shoe) {
             modifier = Modifier
                 .padding(bottom = LocalPaddingValues.current.horizontal)
         ) {
-            TODO("navigate back to shop screen")
+            navigateBack()
         }
 
         Text(
@@ -200,7 +200,9 @@ private fun HelloPagerPreview() {
                     imageCollectionUrl = "",
                     sizes = emptyMap()
                 )
-            )
+            ) {
+
+            }
         }
     }
 }
