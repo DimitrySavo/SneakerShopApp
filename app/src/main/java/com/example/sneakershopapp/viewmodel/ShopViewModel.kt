@@ -1,8 +1,6 @@
 package com.example.sneakershopapp.viewmodel
 
-import android.app.Application
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sneakershopapp.SneakerApplication
@@ -10,7 +8,6 @@ import com.example.sneakershopapp.model.CartShoe
 import com.example.sneakershopapp.model.DataService
 import com.example.sneakershopapp.model.FunctionResult
 import com.example.sneakershopapp.model.Shoe
-import com.example.sneakershopapp.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -20,6 +17,9 @@ class ShopViewModel() : ViewModel(){
 
     private val _shoes = MutableStateFlow(emptyList<Shoe>())
     val shoes = _shoes.asStateFlow()
+
+    private val _filteredShoes = MutableStateFlow(emptyList<Shoe>())
+    val filteredShoes = _filteredShoes.asStateFlow()
 
     private val _favorites = MutableStateFlow(emptyList<String>())
     val favorites = _favorites.asStateFlow()

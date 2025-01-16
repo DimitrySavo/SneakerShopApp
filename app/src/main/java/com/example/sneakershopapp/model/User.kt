@@ -10,6 +10,7 @@ data class User(
     val phoneNumber: String? = null,
     val deliveryAddress: String? = null,
     var favorites: List<String> = emptyList(),
+    val userAvatar: String = ""
 ){
     constructor(): this(
         "",

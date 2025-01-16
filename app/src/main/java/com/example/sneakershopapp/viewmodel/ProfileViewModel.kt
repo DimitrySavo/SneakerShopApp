@@ -9,9 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class ProfileViewModel() : ViewModel() {
-    private val _profileImageUri = MutableStateFlow<Uri?>(null)
-    val profileImageUri = _profileImageUri.asStateFlow()
-
     private val _nameError = MutableStateFlow<String>("")
     val nameError = _nameError.asStateFlow()
 
@@ -24,9 +21,6 @@ class ProfileViewModel() : ViewModel() {
     private val _phoneNumberError = MutableStateFlow("")
     val phoneNumberError = _phoneNumberError.asStateFlow()
 
-    fun changeProfileImageUri(newUri: Uri?) {
-        _profileImageUri.value = newUri
-    }
 
     private fun validateName(name: String): Boolean {
         _nameError.value = ValidationUtils.validateName(name)

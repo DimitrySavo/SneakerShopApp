@@ -29,8 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -80,18 +83,10 @@ fun ShoeCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    top = LocalPaddingValues.current.underField,
-                    start = LocalPaddingValues.current.underField
-                )
         ) {
             IconButton(
                 modifier = Modifier
-                    .padding(bottom = LocalPaddingValues.current.underLabel)
-                    .background(
-                        color = MaterialTheme.colorScheme.onSurface,
-                        shape = RoundedCornerShape(15.dp)
-                    ),
+                    .clip(RoundedCornerShape(15.dp)),
                 onClick = {
                     if(favorites.contains(shoe.id)) {
                         viewModel.unmarkShoeAsFavorite(shoeId = shoe.id)
@@ -101,17 +96,19 @@ fun ShoeCard(
                 }
             ) {
                 Icon(
+                    modifier = Modifier
+                        .scale(1.3f),
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Add to favorite",
                     tint = if (favorites.contains(shoe.id)) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.size(LocalPaddingValues.current.iconSize),
                 )
             }
 
             AsyncImage(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(imageUrl)
                     .crossfade(true)
@@ -122,9 +119,10 @@ fun ShoeCard(
             Text(
                 text = shoe.brandName + " " + shoe.modelName,
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.labelMedium, //написать новый стиль с более жирным текстом(либо сделать с помощью copy)
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold), //написать новый стиль с более жирным текстом(либо сделать с помощью copy)
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(top = 5.dp, bottom = 5.dp, start = LocalPaddingValues.current.underField),
                 textAlign = TextAlign.Left
             )
 
@@ -137,34 +135,12 @@ fun ShoeCard(
                 Text(
                     text = "P " + shoe.price,
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelSmall, //написать новый стиль с более жирным текстом(либо сделать с помощью copy)
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Normal), //написать новый стиль с более жирным текстом(либо сделать с помощью copy)
                     modifier = Modifier
-                        .weight(1f),
+                        .weight(1f)
+                        .padding(bottom = 5.dp, start = LocalPaddingValues.current.underField),
                     textAlign = TextAlign.Left
                 )
-
-                IconButton(
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(
-                                topStart = 15.dp,
-                                topEnd = 0.dp,
-                                bottomStart = 0.dp,
-                                bottomEnd = 15.dp
-                            )
-                        ),
-                    onClick = {
-                        //добавить в корзину (снизу открывается доп окно с размером)
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = "Add to cart",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(LocalPaddingValues.current.iconSize),
-                    )
-                }
             }
         }
     }

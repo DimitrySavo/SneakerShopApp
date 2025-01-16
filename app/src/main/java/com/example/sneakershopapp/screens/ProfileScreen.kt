@@ -1,10 +1,10 @@
 package com.example.sneakershopapp.screens
 
-import android.net.Uri
+import android.util.Base64
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -35,11 +35,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.sneakershopapp.R
 import com.example.sneakershopapp.composables.BackButtonMiddleLabel
@@ -48,6 +46,7 @@ import com.example.sneakershopapp.model.User
 import com.example.sneakershopapp.ui.theme.LocalPaddingValues
 import com.example.sneakershopapp.ui.theme.ProvidePadding
 import com.example.sneakershopapp.ui.theme.SneakerShopAppTheme
+import com.example.sneakershopapp.utils.FormattingUtils.getBase64FromUri
 import com.example.sneakershopapp.viewmodel.ProfileViewModel
 import com.example.sneakershopapp.viewmodel.UserViewModel
 
@@ -58,15 +57,13 @@ fun ProfileScreen(
     userViewModel: UserViewModel,
     profileViewModel: ProfileViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
 
     val userFromViewModel by userViewModel.user.collectAsState()
 
-    val profileImageUri by profileViewModel.profileImageUri.collectAsState()
-
     val nameError by profileViewModel.nameError.collectAsState()
     val surnameError by profileViewModel.surnameError.collectAsState()
-    val emailError by profileViewModel.emailError.collectAsState()
     val phoneError by profileViewModel.phoneNumberError.collectAsState()
 
     var user by remember {
@@ -75,8 +72,15 @@ fun ProfileScreen(
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
-    ) {
-        profileViewModel.changeProfileImageUri(it)
+    ) { uri ->
+        uri?.let {
+            val base64String = getBase64FromUri(context, it)
+            Log.d("Base64Image", base64String ?: "Ошибка преобразования")
+            base64String?.let {
+                user = user.copy(userAvatar = base64String)
+            }
+        }
+
     }
 
     LaunchedEffect(Unit) {
@@ -109,11 +113,12 @@ fun ProfileScreen(
                 navController.popBackStack()
             }
 
+            val bytes = Base64.decode(user.userAvatar, Base64.DEFAULT)
+
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(profileImageUri)
-                    .placeholder(R.drawable.background_smile)
-                    .error(R.drawable.background_smile)
+                    .data(bytes)
+                    .error(R.drawable.placeholder)
                     .build(),
                 contentDescription = "Profile image",
                 contentScale = ContentScale.Crop,
